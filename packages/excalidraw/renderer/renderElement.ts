@@ -1,41 +1,31 @@
-import type {
-  ExcalidrawElement,
-  ExcalidrawTextElement,
-  NonDeletedExcalidrawElement,
-  ExcalidrawFreeDrawElement,
-  ExcalidrawImageElement,
-  ExcalidrawTextElementWithContainer,
-  ExcalidrawFrameLikeElement,
-  NonDeletedSceneElementsMap,
-  ElementsMap,
-} from "../element/types";
+import type { RoughCanvas } from "roughjs/bin/canvas";
+import { getElementAbsoluteCoords } from "../element/bounds";
 import {
-  isTextElement,
-  isLinearElement,
+  hasBoundTextElement,
+  isArrowElement,
   isFreeDrawElement,
   isInitializedImageElement,
-  isArrowElement,
-  hasBoundTextElement,
+  isLinearElement,
   isMagicFrameElement,
+  isTextElement,
 } from "../element/typeChecks";
-import { getElementAbsoluteCoords } from "../element/bounds";
-import type { RoughCanvas } from "roughjs/bin/canvas";
+import type {
+  ElementsMap,
+  ExcalidrawArrowElement,
+  ExcalidrawElement,
+  ExcalidrawFrameLikeElement,
+  ExcalidrawFreeDrawElement,
+  ExcalidrawImageElement,
+  ExcalidrawSatisfactoryElement,
+  ExcalidrawTextElement,
+  ExcalidrawTextElementWithContainer,
+  NonDeletedExcalidrawElement,
+  NonDeletedSceneElementsMap,
+} from "../element/types";
 
-import type {
-  StaticCanvasRenderConfig,
-  RenderableElementsMap,
-  InteractiveCanvasRenderConfig,
-} from "../scene/types";
-import { distance, getFontString, isRTL } from "../utils";
+import type { StrokeOptions } from "perfect-freehand";
+import { getStroke } from "perfect-freehand";
 import rough from "roughjs/bin/rough";
-import type {
-  AppState,
-  StaticCanvasAppState,
-  Zoom,
-  InteractiveCanvasAppState,
-  ElementsPendingErasure,
-  PendingExcalidrawElements,
-} from "../types";
 import { getDefaultAppState } from "../appState";
 import {
   BOUND_TEXT_PADDING,
@@ -46,40 +36,52 @@ import {
   MIME_TYPES,
   THEME,
 } from "../constants";
-import type { StrokeOptions } from "perfect-freehand";
-import { getStroke } from "perfect-freehand";
+import { LinearElementEditor } from "../element/linearElementEditor";
 import {
   getBoundTextElement,
+  getBoundTextMaxHeight,
+  getBoundTextMaxWidth,
   getContainerCoords,
   getContainerElement,
   getLineHeightInPx,
-  getBoundTextMaxHeight,
-  getBoundTextMaxWidth,
   measureText,
 } from "../element/textElement";
-import { LinearElementEditor } from "../element/linearElementEditor";
+import type {
+  InteractiveCanvasRenderConfig,
+  RenderableElementsMap,
+  StaticCanvasRenderConfig,
+} from "../scene/types";
+import type {
+  AppState,
+  ElementsPendingErasure,
+  InteractiveCanvasAppState,
+  PendingExcalidrawElements,
+  StaticCanvasAppState,
+  Zoom,
+} from "../types";
+import { distance, getFontString, isRTL } from "../utils";
 
-import { getContainingFrame } from "../frame";
-import { ShapeCache } from "../scene/ShapeCache";
-import { getLineHeight, getVerticalOffset } from "../fonts";
 import { isRightAngleRads } from "../../math";
+import { getLineHeight, getVerticalOffset } from "../fonts";
+import { getContainingFrame } from "../frame";
+import { t } from "../i18n";
+import { assemblerRecipes } from "../satisfactoryTypes/assembler";
+import { coalGeneratorFuels } from "../satisfactoryTypes/coalGenerator";
+import { constructorRecipes } from "../satisfactoryTypes/constructor";
+import { foundryRecipes } from "../satisfactoryTypes/foundry";
+import { fuelGeneratorFuels } from "../satisfactoryTypes/fuelGenerator";
+import { manufacturerRecipes } from "../satisfactoryTypes/manufacturer";
+import { packagerRecipes } from "../satisfactoryTypes/packager";
+import { refineryRecipes } from "../satisfactoryTypes/refineryRecipes";
+import { getResourceNodeText } from "../satisfactoryTypes/resourceNode";
+import { smelterRecipes } from "../satisfactoryTypes/smelter";
+import { getResourceNodeStroke } from "../scene/satisfactoryStyles";
+import { ShapeCache } from "../scene/ShapeCache";
 import { getCornerRadius } from "../shapes";
 import {
-  getResourceNodeText,
-  getResourceRate,
-  ResourcePurity,
-} from "../satisfactoryTypes/resourceNode";
-import { getResourceNodeStroke } from "../scene/satisfactoryStyles";
-import { t } from "../i18n";
-import { constructorRecipes } from "../satisfactoryTypes/constructor";
-import { assemblerRecipes } from "../satisfactoryTypes/assembler";
-import { manufacturerRecipes } from "../satisfactoryTypes/manufacturer";
-import { smelterRecipes } from "../satisfactoryTypes/smelter";
-import { foundryRecipes } from "../satisfactoryTypes/foundry";
-import { coalGeneratorFuels } from "../satisfactoryTypes/coalGenerator";
-import { fuelGeneratorFuels } from "../satisfactoryTypes/fuelGenerator";
-import { refineryRecipes } from "../satisfactoryTypes/refineryRecipes";
-import { packagerRecipes } from "../satisfactoryTypes/packager";
+  getBuildingRate,
+  getSplitterIncomingRate,
+} from "./arrowRateCalculators";
 
 // using a stronger invert (100% vs our regular 93%) and saturate
 // as a temp hack to make images in dark theme look closer to original
@@ -593,115 +595,85 @@ const drawElementOnCanvas = (
 
       let itemRate: number | null = null;
       let isByProduct = false;
-      if (!element.boundElements?.length) {
-        const startElement = element.startBinding?.elementId
-          ? elementsMap.get(element.startBinding.elementId)
+
+      const thisArrow = element as ExcalidrawArrowElement;
+
+      if (!thisArrow.boundElements?.length) {
+        const sourceElement = thisArrow.startBinding?.elementId
+          ? elementsMap.get(thisArrow.startBinding.elementId)
           : null;
-        const endElement = element.endBinding?.elementId
-          ? elementsMap.get(element.endBinding.elementId)
+        const destElement = thisArrow.endBinding?.elementId
+          ? elementsMap.get(thisArrow.endBinding.elementId)
           : null;
 
-        const attachedArrows = startElement?.boundElements?.filter(
+        const otherArrowsOnSource = sourceElement?.boundElements?.filter(
           (boundElement) => boundElement.type === "arrow",
         );
 
-        if (startElement?.type === "oilRefinery") {
-          if (attachedArrows?.length || 0 > 2) {
+        const arrowsLeavingSource = otherArrowsOnSource?.filter(
+          (arrow) =>
+            (elementsMap.get(arrow.id) as ExcalidrawArrowElement).startBinding
+              ?.elementId === sourceElement?.id,
+        );
+
+        // Validate number of arrows
+        if (sourceElement?.type === "splitter") {
+          if (arrowsLeavingSource?.length || 0 > 3) {
             if (
-              attachedArrows![0].id !== element.id &&
-              attachedArrows![1].id !== element.id
+              arrowsLeavingSource![0].id !== element.id &&
+              arrowsLeavingSource![1].id !== element.id &&
+              arrowsLeavingSource![2].id !== element.id
+            ) {
+              itemRate = -1;
+            }
+          }
+        } else if (sourceElement?.type === "oilRefinery") {
+          if (arrowsLeavingSource?.length || 0 > 2) {
+            if (
+              arrowsLeavingSource![0].id !== element.id &&
+              arrowsLeavingSource![1].id !== element.id
             ) {
               itemRate = -1;
             }
 
-            if (attachedArrows![1].id === element.id) {
+            if (arrowsLeavingSource![1].id === element.id) {
               isByProduct = true;
             }
           }
         } else {
-          if (attachedArrows?.length || 0 > 1) {
-            if (attachedArrows![0].id !== element.id) {
+          if (arrowsLeavingSource?.length || 0 > 1) {
+            if (arrowsLeavingSource![0].id !== element.id) {
               itemRate = -1;
             }
           }
         }
 
-        if (startElement && itemRate !== -1) {
-          switch (startElement.type) {
-            case "resourceNode":
-              itemRate = getResourceRate(
-                startElement.resourceNodeResourcePurity,
-                startElement.resourceNodeMinerTier,
+        if (sourceElement && itemRate !== -1) {
+          switch (sourceElement.type) {
+            case "coalGenerator":
+            case "fuelGenerator":
+              itemRate = -1;
+              break;
+            case "splitter":
+              itemRate = getSplitterIncomingRate(0, sourceElement, elementsMap);
+
+              itemRate = itemRate / (arrowsLeavingSource?.length || 1);
+              break;
+            case "merger":
+              itemRate = getSplitterIncomingRate(
+                0,
+                sourceElement,
+                elementsMap,
+                true,
               );
               break;
-            case "constructor":
-              itemRate =
-                constructorRecipes.find(
-                  (recipe) => recipe.id === startElement.recipe,
-                )?.output.rate || null;
-              break;
-            case "assembler":
-              itemRate =
-                assemblerRecipes.find(
-                  (recipe) => recipe.id === startElement.recipe,
-                )?.output.rate || null;
-              break;
-            case "manufacturer":
-              itemRate =
-                manufacturerRecipes.find(
-                  (recipe) => recipe.id === startElement.recipe,
-                )?.output.rate || null;
-              break;
-            case "smelter":
-              itemRate =
-                smelterRecipes.find(
-                  (recipe) => recipe.id === startElement.recipe,
-                )?.output.rate || null;
-              break;
-            case "foundry":
-              itemRate =
-                foundryRecipes.find(
-                  (recipe) => recipe.id === startElement.recipe,
-                )?.output.rate || null;
-              break;
-            case "packager":
-              itemRate =
-                packagerRecipes.find(
-                  (recipe) => recipe.id === startElement.recipe,
-                )?.output.rate || null;
-              break;
-            case "oilRefinery":
-              if (isByProduct) {
-                itemRate =
-                  refineryRecipes.find(
-                    (recipe) => recipe.id === startElement.recipe,
-                  )?.byProduct?.rate || null;
-              } else {
-                itemRate =
-                  refineryRecipes.find(
-                    (recipe) => recipe.id === startElement.recipe,
-                  )?.output.rate || null;
-              }
-              break;
-            case "waterExtractor":
-              itemRate = 120;
-              break;
-            case "oilExtractor":
-              itemRate = 120;
-              if (startElement.purity === ResourcePurity.Impure) {
-                itemRate = 60;
-              } else if (startElement.purity === ResourcePurity.Pure) {
-                itemRate = 240;
-              }
-              break;
-
             default:
-            // do nothing
+              itemRate = getBuildingRate(
+                sourceElement as ExcalidrawSatisfactoryElement,
+              );
           }
         }
       }
-
-      console.log(rc, appState);
 
       ShapeCache.get(element)!.forEach((shape) => {
         rc.draw(shape);
@@ -725,8 +697,8 @@ const drawElementOnCanvas = (
           itemRate === -1
             ? "X"
             : isByProduct
-            ? `(${itemRate})`
-            : itemRate.toString();
+            ? `(${Math.round(itemRate * 100) / 100})`
+            : `${Math.round(itemRate * 100) / 100}`;
 
         const metrics = measureText(rateString, font, lineHeight);
 
@@ -749,16 +721,16 @@ const drawElementOnCanvas = (
         );
 
         context.clearRect(
-          -(metrics.width / 2 + BOUND_TEXT_PADDING) *
+          -(metrics.width / 4 + BOUND_TEXT_PADDING) *
             window.devicePixelRatio *
             appState.zoom.value,
-          -(metrics.height / 2 + BOUND_TEXT_PADDING) *
+          -(metrics.height / 4 + BOUND_TEXT_PADDING) *
             window.devicePixelRatio *
             appState.zoom.value,
-          (metrics.width + BOUND_TEXT_PADDING * 2) *
+          (metrics.width / 2 + BOUND_TEXT_PADDING * 2) *
             window.devicePixelRatio *
             appState.zoom.value,
-          (metrics.height + BOUND_TEXT_PADDING * 2) *
+          (metrics.height / 2 + BOUND_TEXT_PADDING * 2) *
             window.devicePixelRatio *
             appState.zoom.value,
         );
@@ -855,14 +827,6 @@ const drawElementOnCanvas = (
         );
 
         for (let index = 0; index < lines.length; index++) {
-          console.log(
-            "default",
-            horizontalOffset,
-            verticalOffset,
-            lineHeightPx,
-            element.height,
-          );
-
           context.fillText(
             lines[index],
             horizontalOffset,
