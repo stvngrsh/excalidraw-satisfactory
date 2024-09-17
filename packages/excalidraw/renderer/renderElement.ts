@@ -686,6 +686,12 @@ const drawElementOnCanvas = (
                 elementsMap,
                 "pipe",
               );
+
+              itemRate = itemRate / (arrowsLeavingSource?.length || 1);
+
+              if (sourceElement.mode === "manifold") {
+                itemRate = -2;
+              }
               break;
             default:
               itemRate = getBuildingRate(
