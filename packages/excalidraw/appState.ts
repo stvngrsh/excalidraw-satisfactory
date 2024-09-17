@@ -23,6 +23,7 @@ import {
   DEFAULT_COAL_GENERATOR_FUEL,
   DEFAULT_FUEL_GENERATOR_FUEL,
   DEFAULT_CLOCK_SPEED,
+  DEFAULT_SPLITTER_MODE,
 } from "./constants";
 import type { AppState, NormalizedZoomValue } from "./types";
 
@@ -65,6 +66,7 @@ export const getDefaultAppState = (): Omit<
     currentItemPackagerRecipe: DEFAULT_PACKAGER_RECIPE,
     currentItemCoalGeneratorFuel: DEFAULT_COAL_GENERATOR_FUEL,
     currentItemFuelGeneratorFuel: DEFAULT_FUEL_GENERATOR_FUEL,
+    currentItemSplitterMode: DEFAULT_SPLITTER_MODE,
     currentItemClockSpeed: DEFAULT_CLOCK_SPEED,
     currentHoveredFontFamily: null,
     cursorButton: "up",
@@ -194,6 +196,7 @@ const APP_STATE_STORAGE_CONF = (<
   currentItemSmelterRecipe: { browser: true, export: false, server: false },
   currentItemFoundryRecipe: { browser: true, export: false, server: false },
   currentItemConstructorRecipe: { browser: true, export: false, server: false },
+  currentItemSplitterMode: { browser: true, export: false, server: false },
   currentItemAssemblerRecipe: { browser: true, export: false, server: false },
   currentItemManufacturerRecipe: {
     browser: true,

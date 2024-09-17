@@ -162,7 +162,8 @@ export class ElementBounds {
       element.type === "ellipse" ||
       element.type === "resourceNode" ||
       element.type === "waterExtractor" ||
-      element.type === "oilExtractor"
+      element.type === "oilExtractor" ||
+      element.type === "pipe"
     ) {
       const w = (x2 - x1) / 2;
       const h = (y2 - y1) / 2;

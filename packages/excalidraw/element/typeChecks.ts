@@ -159,6 +159,7 @@ export const isBindableElement = (
       element.type === "magicframe" ||
       element.type === "resourceNode" ||
       element.type === "splitter" ||
+      element.type === "pipe" ||
       element.type === "merger" ||
       element.type === "constructor" ||
       element.type === "assembler" ||
@@ -246,6 +247,7 @@ export const isExcalidrawElement = (
     case "selection":
     case "resourceNode":
     case "splitter":
+    case "pipe":
     case "merger":
     case "constructor":
     case "assembler":

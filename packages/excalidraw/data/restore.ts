@@ -87,6 +87,7 @@ export const AllowedExcalidrawActiveTools: Record<
   assembler: true,
   manufacturer: true,
   splitter: true,
+  pipe: true,
   merger: true,
   smelter: true,
   foundry: true,
@@ -337,6 +338,13 @@ const restoreElement = (
         resourceNodeMinerTier: element.resourceNodeMinerTier,
       });
     case "splitter":
+      return restoreElementWithProperties(element, {
+        mode: element.mode,
+      });
+    case "pipe":
+      return restoreElementWithProperties(element, {
+        mode: element.mode,
+      });
     case "merger":
       return restoreElementWithProperties(element, {});
     case "constructor":

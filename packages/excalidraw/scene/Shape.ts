@@ -32,6 +32,7 @@ import {
 import { getCornerRadius, isPathALoop } from "../shapes";
 import {
   getBuildingFill,
+  getBuildingFillStyle,
   getBuildingStroke,
   getResourceNodeFill,
   getResourceNodeStroke,
@@ -112,6 +113,7 @@ export const generateRoughOptions = (
       return options;
     }
     case "splitter":
+    case "pipe":
     case "merger":
     case "constructor":
     case "assembler":
@@ -125,7 +127,7 @@ export const generateRoughOptions = (
     case "oilExtractor":
     case "waterExtractor": {
       options.stroke = getBuildingStroke(element.type);
-      options.fillStyle = "solid";
+      options.fillStyle = getBuildingFillStyle(element.type);
       options.fill = getBuildingFill(element.type);
 
       if (
@@ -443,7 +445,8 @@ export const _generateElementShape = (
     case "waterExtractor":
     case "oilExtractor":
     case "resourceNode":
-    case "ellipse": {
+    case "ellipse":
+    case "pipe": {
       const shape: ElementShapes[typeof element.type] = generator.ellipse(
         element.width / 2,
         element.height / 2,

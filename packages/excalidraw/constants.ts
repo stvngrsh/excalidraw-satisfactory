@@ -184,6 +184,7 @@ export const DEFAULT_PACKAGER_RECIPE = "Packager_PackagedFuel";
 export const DEFAULT_COAL_GENERATOR_FUEL = "CoalGenerator_Coal";
 export const DEFAULT_FUEL_GENERATOR_FUEL = "FuelGenerator_Fuel";
 export const DEFAULT_CLOCK_SPEED = 100;
+export const DEFAULT_SPLITTER_MODE = "balance";
 
 export const SIDE_RESIZING_THRESHOLD = 2 * DEFAULT_TRANSFORM_HANDLE_SPACING;
 // a small epsilon to make side resizing always take precedence
@@ -439,6 +440,7 @@ export const TOOL_TYPE = {
   waterExtractor: "waterExtractor",
   splitter: "splitter",
   merger: "merger",
+  pipe: "pipe",
 } as const;
 
 export const EDITOR_LS_KEYS = {

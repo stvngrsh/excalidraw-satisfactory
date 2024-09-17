@@ -135,6 +135,7 @@ export type ToolType =
   | "laser"
   | "resourceNode"
   | "splitter"
+  | "pipe"
   | "merger"
   | "constructor"
   | "assembler"
@@ -325,6 +326,7 @@ export interface AppState {
   currentItemSmelterRecipe: string;
   currentItemFoundryRecipe: string;
   currentItemConstructorRecipe: string;
+  currentItemSplitterMode: string;
   currentItemAssemblerRecipe: string;
   currentItemManufacturerRecipe: string;
   currentItemRefineryRecipe: string;

@@ -36,6 +36,7 @@ import {
   isResourceNode,
   isSmelter,
   isSplitter,
+  isPipe,
   isWaterExtractor,
   toolIsArrow,
 } from "../scene/comparisons";
@@ -89,6 +90,7 @@ export const canChangeStrokeColor = (
       commonSelectedType !== "magicframe" &&
       commonSelectedType !== "resourceNode" &&
       commonSelectedType !== "splitter" &&
+      commonSelectedType !== "pipe" &&
       commonSelectedType !== "merger" &&
       commonSelectedType !== "constructor" &&
       commonSelectedType !== "assembler" &&
@@ -171,13 +173,19 @@ export const SelectedShapeActions = ({
       {(isSplitter(appState.activeTool.type) ||
         targetElements.some((element) => isSplitter(element.type))) && (
         <>
-          <div>{t("labels.noOptions")}</div>
+          <div>{renderAction("changeSplitterMode")}</div>
         </>
       )}
       {(isMerger(appState.activeTool.type) ||
         targetElements.some((element) => isMerger(element.type))) && (
         <>
           <div>{t("labels.noOptions")}</div>
+        </>
+      )}
+      {(isPipe(appState.activeTool.type) ||
+        targetElements.some((element) => isPipe(element.type))) && (
+        <>
+          <div>{renderAction("changeSplitterMode")}</div>
         </>
       )}
       {(isConstructor(appState.activeTool.type) ||

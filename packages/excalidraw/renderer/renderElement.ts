@@ -61,7 +61,7 @@ import type {
 } from "../types";
 import { distance, getFontString, isRTL } from "../utils";
 
-import { isRightAngleRads } from "../../math";
+import { isRightAngleRads, line } from "../../math";
 import { getLineHeight, getVerticalOffset } from "../fonts";
 import { getContainingFrame } from "../frame";
 import { t } from "../i18n";
@@ -82,6 +82,7 @@ import {
   getBuildingRate,
   getSplitterIncomingRate,
 } from "./arrowRateCalculators";
+import { RecipePart } from "../satisfactoryTypes/items";
 
 // using a stronger invert (100% vs our regular 93%) and saturate
 // as a temp hack to make images in dark theme look closer to original
@@ -415,7 +416,8 @@ const drawElementOnCanvas = (
     case "diamond":
     case "ellipse":
     case "merger":
-    case "splitter": {
+    case "splitter":
+    case "pipe": {
       context.lineJoin = "round";
       context.lineCap = "round";
       rc.draw(ShapeCache.get(element)!);
@@ -446,7 +448,7 @@ const drawElementOnCanvas = (
       context.textAlign = "center";
       context.textBaseline = "middle";
 
-      const lines = [t(`element.${element.type}`)];
+      let lines = [];
 
       switch (element.type) {
         case "constructor":
@@ -484,12 +486,14 @@ const drawElementOnCanvas = (
             coalGeneratorFuels.find((fuel) => fuel.id === element.fuel)
               ?.title || "",
           );
+          lines.push("Gen");
           break;
         case "fuelGenerator":
           lines.push(
             fuelGeneratorFuels.find((fuel) => fuel.id === element.fuel)
               ?.title || "",
           );
+          lines.push("Gen");
           break;
         case "oilRefinery":
           lines.push(
@@ -504,11 +508,15 @@ const drawElementOnCanvas = (
           );
           break;
         case "oilExtractor":
+          lines.push("Oil");
           lines.push(element.purity);
           break;
         case "waterExtractor":
+          lines.push("Water");
           break;
       }
+
+      lines = lines.map((line) => line.split(" ")).flat();
 
       const horizontalOffset = element.width / 2;
 
@@ -523,15 +531,14 @@ const drawElementOnCanvas = (
         lineHeightPx,
       );
 
-      if (element.type === "waterExtractor") {
-        verticalOffset = 0;
-      }
-
       for (let index = 0; index < lines.length; index++) {
         context.fillText(
           lines[index],
           horizontalOffset,
-          index * lineHeightPx + element.height / 2 - verticalOffset / 2,
+          index * lineHeightPx +
+            element.height / 2 -
+            (lines.length * lineHeightPx) / 2 +
+            verticalOffset,
         );
       }
       context.restore();
@@ -617,7 +624,8 @@ const drawElementOnCanvas = (
         );
 
         // Validate number of arrows
-        if (sourceElement?.type === "splitter") {
+        if (sourceElement?.type === "pipe") {
+        } else if (sourceElement?.type === "splitter") {
           if (arrowsLeavingSource?.length || 0 > 3) {
             if (
               arrowsLeavingSource![0].id !== element.id &&
@@ -658,13 +666,25 @@ const drawElementOnCanvas = (
               itemRate = getSplitterIncomingRate(0, sourceElement, elementsMap);
 
               itemRate = itemRate / (arrowsLeavingSource?.length || 1);
+
+              if (sourceElement.mode === "manifold") {
+                itemRate = -2;
+              }
               break;
             case "merger":
               itemRate = getSplitterIncomingRate(
                 0,
                 sourceElement,
                 elementsMap,
-                true,
+                "merger",
+              );
+              break;
+            case "pipe":
+              itemRate = getSplitterIncomingRate(
+                0,
+                sourceElement,
+                elementsMap,
+                "pipe",
               );
               break;
             default:
@@ -696,6 +716,8 @@ const drawElementOnCanvas = (
         const rateString =
           itemRate === -1
             ? "X"
+            : itemRate === -2
+            ? ""
             : isByProduct
             ? `(${Math.round(itemRate * 100) / 100})`
             : `${Math.round(itemRate * 100) / 100}`;
@@ -720,26 +742,29 @@ const drawElementOnCanvas = (
           (flipY ? -1 : 1) * (element.height / 2),
         );
 
-        context.clearRect(
-          -(metrics.width / 4 + BOUND_TEXT_PADDING) *
-            window.devicePixelRatio *
-            appState.zoom.value,
-          -(metrics.height / 4 + BOUND_TEXT_PADDING) *
-            window.devicePixelRatio *
-            appState.zoom.value,
-          (metrics.width / 2 + BOUND_TEXT_PADDING * 2) *
-            window.devicePixelRatio *
-            appState.zoom.value,
-          (metrics.height / 2 + BOUND_TEXT_PADDING * 2) *
-            window.devicePixelRatio *
-            appState.zoom.value,
-        );
-        context.translate(-horizontalOffset, -verticalOffset);
-        context.fillText(
-          rateString,
-          horizontalOffset,
-          lineHeightPx + metrics.height / 2 - verticalOffset,
-        );
+        if (rateString) {
+          context.clearRect(
+            -(metrics.width / 4 + BOUND_TEXT_PADDING) *
+              window.devicePixelRatio *
+              appState.zoom.value,
+            -(metrics.height / 4 + BOUND_TEXT_PADDING) *
+              window.devicePixelRatio *
+              appState.zoom.value,
+            (metrics.width / 2 + BOUND_TEXT_PADDING * 2) *
+              window.devicePixelRatio *
+              appState.zoom.value,
+            (metrics.height / 2 + BOUND_TEXT_PADDING * 2) *
+              window.devicePixelRatio *
+              appState.zoom.value,
+          );
+          context.translate(-horizontalOffset, -verticalOffset);
+          context.fillText(
+            rateString,
+            horizontalOffset,
+            lineHeightPx + metrics.height / 2 - verticalOffset,
+          );
+        }
+
         context.restore();
       }
 
@@ -1139,6 +1164,7 @@ export const renderElement = (
     case "waterExtractor":
     case "oilExtractor":
     case "splitter":
+    case "pipe":
     case "merger": {
       // TODO investigate if we can do this in situ. Right now we need to call
       // beforehand because math helpers (such as getElementAbsoluteCoords)

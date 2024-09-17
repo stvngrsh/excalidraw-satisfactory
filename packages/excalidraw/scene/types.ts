@@ -146,6 +146,7 @@ export type ElementShapes = {
   frame: null;
   magicframe: null;
   splitter: Drawable;
+  pipe: Drawable;
   merger: Drawable;
   resourceNode: Drawable;
   constructor: Drawable;

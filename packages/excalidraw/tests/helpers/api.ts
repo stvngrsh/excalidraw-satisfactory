@@ -22,7 +22,8 @@ import type {
   ExcalidrawWaterExtractorElement,
   ExcalidrawOilRefineryElement,
   ExcalidrawPackagerElement,
-  ExcalidrawSmelterElement
+  ExcalidrawSmelterElement,
+  ExcalidrawPipeElement
 } from "../../element/types";
 import { newElement, newTextElement, newLinearElement } from "../../element";
 import { DEFAULT_VERTICAL_ALIGN, ROUNDNESS } from "../../constants";
@@ -53,7 +54,8 @@ import {
   newPackagerElement,
   newOilExtractorElement,
   newOilRefineryElement,
-  newWaterExtractorElement
+  newWaterExtractorElement,
+  newPipeElement
 } from "../../element/newElement";
 import type { AppState } from "../../types";
 import { getSelectedElements } from "../../scene/selection";
@@ -371,6 +373,11 @@ export class API {
       case "merger":
         element = newMergerElement({
           ...base as ExcalidrawMergerElement
+        });
+        break;
+      case 'pipe':
+        element = newPipeElement({
+          ...base as ExcalidrawPipeElement  
         });
         break;
       case "constructor":

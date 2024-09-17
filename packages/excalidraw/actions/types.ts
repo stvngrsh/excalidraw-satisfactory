@@ -151,7 +151,8 @@ export type ActionName =
   | "changePackagerRecipe"
   | "changeCoalGeneratorFuel"
   | "changeFuelGeneratorFuel"
-  | "changeClockSpeed";
+  | "changeClockSpeed"
+  | "changeSplitterMode";
 
 export type PanelComponentProps = {
   elements: readonly ExcalidrawElement[];

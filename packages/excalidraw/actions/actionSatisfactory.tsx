@@ -20,6 +20,8 @@ import {
   ExcalidrawPackagerElement,
   ExcalidrawResourceNodeElement,
   ExcalidrawSmelterElement,
+  ExcalidrawSplitterElement,
+  ExcalidrawPipeElement,
 } from "../element/types";
 import {
   resourcePurities,
@@ -35,6 +37,12 @@ import { coalGeneratorFuels } from "../satisfactoryTypes/coalGenerator";
 import { fuelGeneratorFuels } from "../satisfactoryTypes/fuelGenerator";
 import { refineryRecipes } from "../satisfactoryTypes/refineryRecipes";
 import { packagerRecipes } from "../satisfactoryTypes/packager";
+import { ButtonIconSelect } from "../components/ButtonIconSelect";
+import {
+  ArrowsForkIcon,
+  ArrowsManifoldIcon,
+  StrokeStyleDashedIcon,
+} from "../components/icons";
 
 export const actionClockSpeed = register({
   name: "changeClockSpeed",
@@ -775,4 +783,53 @@ export const actionChangeFuelGeneratorFuel = register({
       </fieldset>
     );
   },
+});
+
+export const actionChangeSplitterMode = register({
+  name: "changeSplitterMode",
+  label: "labels.splitterMode",
+  trackEvent: false,
+  perform: (elements, appState, value) => {
+    return {
+      elements: changeProperty(elements, appState, (el) =>
+        newElementWith<ExcalidrawSplitterElement>(
+          el as ExcalidrawSplitterElement,
+          {
+            mode: value,
+          },
+        ),
+      ),
+      appState: { ...appState, currentItemSplitterMode: value },
+      storeAction: StoreAction.CAPTURE,
+    };
+  },
+  PanelComponent: ({ elements, appState, updateData }) => (
+    <fieldset>
+      <legend>{t("labels.splitterMode")}</legend>
+      <ButtonIconSelect
+        group="splitterMode"
+        options={[
+          {
+            value: "balance",
+            text: t("labels.balance"),
+            icon: ArrowsForkIcon,
+          },
+          {
+            value: "manifold",
+            text: t("labels.manifold"),
+            icon: ArrowsManifoldIcon,
+          },
+        ]}
+        value={getFormValue(
+          elements,
+          appState,
+          (element) => (element as ExcalidrawSplitterElement).mode,
+          true,
+          (hasSelection) =>
+            hasSelection ? null : appState.currentItemSplitterMode,
+        )}
+        onChange={(value) => updateData(value)}
+      />
+    </fieldset>
+  ),
 });

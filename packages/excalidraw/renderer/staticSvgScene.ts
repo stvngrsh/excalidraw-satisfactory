@@ -141,6 +141,7 @@ const renderElementToSvg = (
     case "ellipse":
     case "merger":
     case "splitter":
+    case "pipe":
     case "constructor":
     case "assembler":
     case "manufacturer":

@@ -30,6 +30,7 @@ import {
   newResourceNodeElement,
   newSmelterElement,
   newSplitterElement,
+  newPipeElement,
   newTextElement,
   newWaterExtractorElement,
 } from "../element/newElement";
@@ -60,6 +61,8 @@ import type {
   ExcalidrawSatisfactoryElement,
   ExcalidrawSelectionElement,
   ExcalidrawSmelterElement,
+  ExcalidrawSplitterElement,
+  ExcalidrawPipeElement,
   ExcalidrawTextElement,
   ExcalidrawWaterExtractorElement,
   FileId,
@@ -357,13 +360,19 @@ const bindLinearElementToElement = (
           }
           case "splitter":
             startBoundElement = newSplitterElement({
-              ...(existingElement as ExcalidrawResourceNodeElement),
+              ...(existingElement as ExcalidrawSplitterElement),
               ...start,
             });
             break;
           case "merger":
             startBoundElement = newMergerElement({
               ...(existingElement as ExcalidrawMergerElement),
+              ...start,
+            });
+            break;
+          case "pipe":
+            startBoundElement = newPipeElement({
+              ...(existingElement as ExcalidrawPipeElement),
               ...start,
             });
             break;
@@ -517,13 +526,19 @@ const bindLinearElementToElement = (
           }
           case "splitter":
             endBoundElement = newSplitterElement({
-              ...(existingElement as ExcalidrawResourceNodeElement),
+              ...(existingElement as ExcalidrawSplitterElement),
               ...end,
             });
             break;
           case "merger":
-            endBoundElement = newSplitterElement({
+            endBoundElement = newMergerElement({
               ...(existingElement as ExcalidrawMergerElement),
+              ...end,
+            });
+            break;
+          case "pipe":
+            endBoundElement = newPipeElement({
+              ...(existingElement as ExcalidrawPipeElement),
               ...end,
             });
             break;
@@ -752,7 +767,7 @@ export const convertToExcalidrawElements = (
         const width = element?.width || DEFAULT_DIMENSION;
         const height = element?.height || DEFAULT_DIMENSION;
         excalidrawElement = newSplitterElement({
-          ...(element as ExcalidrawResourceNodeElement),
+          ...(element as ExcalidrawSplitterElement),
           width,
           height,
         });
@@ -763,7 +778,18 @@ export const convertToExcalidrawElements = (
         const width = element?.width || DEFAULT_DIMENSION;
         const height = element?.height || DEFAULT_DIMENSION;
         excalidrawElement = newMergerElement({
-          ...(element as ExcalidrawResourceNodeElement),
+          ...(element as ExcalidrawMergerElement),
+          width,
+          height,
+        });
+
+        break;
+      }
+      case "pipe": {
+        const width = element?.width || DEFAULT_DIMENSION;
+        const height = element?.height || DEFAULT_DIMENSION;
+        excalidrawElement = newPipeElement({
+          ...(element as ExcalidrawPipeElement),
           width,
           height,
         });

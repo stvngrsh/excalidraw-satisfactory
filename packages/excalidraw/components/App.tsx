@@ -143,6 +143,7 @@ import {
   newArrowElement,
   newResourceNodeElement,
   newSplitterElement,
+  newPipeElement,
   newMergerElement,
   newConstructorElement,
   newAssemblerElement,
@@ -6278,6 +6279,8 @@ class App extends React.Component<AppProps, AppState> {
       this.createSatisfactoryElementOnPointerDown("merger", pointerDownState);
     } else if (this.state.activeTool.type === "splitter") {
       this.createSatisfactoryElementOnPointerDown("splitter", pointerDownState);
+    } else if (this.state.activeTool.type === "pipe") {
+      this.createSatisfactoryElementOnPointerDown("pipe", pointerDownState);
     } else if (this.state.activeTool.type === "constructor") {
       this.createSatisfactoryElementOnPointerDown(
         "constructor",
@@ -7512,6 +7515,13 @@ class App extends React.Component<AppProps, AppState> {
       case "splitter":
         newElement = newSplitterElement({
           ...baseElementAttributes,
+          mode: this.state.currentItemSplitterMode as "balance" | "manifold",
+        });
+        break;
+      case "pipe":
+        newElement = newPipeElement({
+          ...baseElementAttributes,
+          mode: this.state.currentItemSplitterMode as "balance" | "manifold",
         });
         break;
       case "merger":

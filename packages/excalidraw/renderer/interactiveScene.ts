@@ -282,6 +282,7 @@ const renderBindingHighlightForBindableElement = (
     case "resourceNode":
     case "waterExtractor":
     case "oilExtractor":
+    case "pipe":
       strokeEllipseWithRotation(
         context,
         width + padding * 2,

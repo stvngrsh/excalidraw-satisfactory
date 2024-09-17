@@ -20,6 +20,7 @@ export const hasStrokeColor = (type: ElementOrToolType) =>
   type !== "magicframe" &&
   type !== "resourceNode" &&
   type !== "splitter" &&
+  type !== "pipe" &&
   type !== "merger" &&
   type !== "constructor" &&
   type !== "assembler" &&
@@ -68,6 +69,7 @@ export const isResourceNode = (type: ElementOrToolType) =>
   type === "resourceNode";
 export const isSplitter = (type: ElementOrToolType) => type === "splitter";
 export const isMerger = (type: ElementOrToolType) => type === "merger";
+export const isPipe = (type: ElementOrToolType) => type === "pipe";
 export const isConstructor = (type: ElementOrToolType) =>
   type === "constructor";
 export const isAssembler = (type: ElementOrToolType) => type === "assembler";

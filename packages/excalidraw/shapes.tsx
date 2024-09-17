@@ -194,6 +194,7 @@ export const getElementShape = <Point extends GlobalPoint | LocalPoint>(
     case "resourceNode":
     case "waterExtractor":
     case "oilExtractor":
+    case "pipe":
       return getEllipseShape(element);
 
     case "freedraw": {

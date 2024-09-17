@@ -55,6 +55,7 @@ import type {
   ExcalidrawOilExtractorElement,
   ExcalidrawOilRefineryElement,
   ExcalidrawPackagerElement,
+  ExcalidrawPipeElement,
   ExcalidrawRectangleElement,
   ExcalidrawResourceNodeElement,
   ExcalidrawSelectionElement,
@@ -207,7 +208,8 @@ type CircularElement =
   | ExcalidrawEllipseElement
   | ExcalidrawResourceNodeElement
   | ExcalidrawWaterExtractorElement
-  | ExcalidrawOilExtractorElement;
+  | ExcalidrawOilExtractorElement
+  | ExcalidrawPipeElement;
 
 // ellipse
 export const getEllipseShape = <Point extends GlobalPoint | LocalPoint>(

@@ -9,6 +9,7 @@ import {
   ExcalidrawOilExtractorElement,
   ExcalidrawOilRefineryElement,
   ExcalidrawPackagerElement,
+  ExcalidrawPipeElement,
   ExcalidrawSatisfactoryElement,
   ExcalidrawSmelterElement,
   ExcalidrawSplitterElement,
@@ -131,9 +132,12 @@ export const getBuildingRate = (
 
 export const getSplitterIncomingRate = (
   _rate: number,
-  splitter: ExcalidrawSplitterElement | ExcalidrawMergerElement,
+  splitter:
+    | ExcalidrawSplitterElement
+    | ExcalidrawMergerElement
+    | ExcalidrawPipeElement,
   elementsMap: ElementsMap,
-  merger?: boolean,
+  type: "splitter" | "merger" | "pipe" = "splitter",
 ): number => {
   let rate = _rate;
   const incomingArrows = splitter.boundElements
@@ -145,7 +149,15 @@ export const getSplitterIncomingRate = (
     );
 
   if (incomingArrows) {
-    for (let i = 0; i < Math.min(merger ? 3 : 1, incomingArrows.length); i++) {
+    for (
+      let i = 0;
+      i <
+      Math.min(
+        type === "merger" ? 3 : type === "splitter" ? 1 : 10,
+        incomingArrows.length,
+      );
+      i++
+    ) {
       const incomingArrow = incomingArrows[i];
       const sourceElementId = (
         elementsMap.get(incomingArrow.id) as ExcalidrawArrowElement
@@ -154,11 +166,15 @@ export const getSplitterIncomingRate = (
         ? elementsMap.get(sourceElementId)
         : null;
 
-      if (sourceElement?.type === "splitter") {
+      if (
+        sourceElement?.type === "splitter" ||
+        sourceElement?.type === "pipe"
+      ) {
         let tempRate = getSplitterIncomingRate(
-          rate,
+          0,
           sourceElement,
           elementsMap,
+          sourceElement.type,
         );
 
         const sourceElementOutgoingArrows = sourceElement.boundElements
@@ -173,7 +189,12 @@ export const getSplitterIncomingRate = (
 
         rate += tempRate;
       } else if (sourceElement?.type === "merger") {
-        rate += getSplitterIncomingRate(rate, sourceElement, elementsMap, true);
+        rate += getSplitterIncomingRate(
+          0,
+          sourceElement,
+          elementsMap,
+          "merger",
+        );
       } else if (sourceElement) {
         rate += getBuildingRate(sourceElement as ExcalidrawSatisfactoryElement);
       }

@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { t } from "../i18n";
 import {
+  ArrowsCrossIcon,
   ArrowsMergeIcon,
   ArrowsSplitIcon,
   boltIcon,
@@ -31,6 +32,11 @@ const SHAPES = [
   {
     icon: ArrowsMergeIcon,
     value: "merger",
+    fillable: true,
+  },
+  {
+    icon: ArrowsCrossIcon,
+    value: "pipe",
     fillable: true,
   },
   {

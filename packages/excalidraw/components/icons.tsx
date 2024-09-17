@@ -71,6 +71,38 @@ const modifiedTablerIconProps: Opts = {
 
 // -----------------------------------------------------------------------------
 
+export const ArrowsCrossIcon = createIcon(
+  <g strokeWidth="1.5">
+    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+    <path d="M16 4h4v4"></path>
+    <path d="M15 9l5 -5"></path>
+    <path d="M4 20l5 -5"></path>
+    <path d="M16 20h4v-4"></path>
+    <path d="M4 4l16 16"></path>
+  </g>,
+  tablerIconProps,
+);
+export const ArrowsForkIcon = createIcon(
+  <g strokeWidth="1.5">
+    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+    <path d="M16 3h5v5"></path>
+    <path d="M8 3h-5v5"></path>
+    <path d="M21 3l-7.536 7.536a5 5 0 0 0 -1.464 3.534v6.93"></path>
+    <path d="M3 3l7.536 7.536a5 5 0 0 1 1.464 3.534v.93"></path>
+  </g>,
+  tablerIconProps,
+);
+
+export const ArrowsManifoldIcon = createIcon(
+  <g strokeWidth="1.5">
+    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+    <path d="M18 3v6"></path>
+    <path d="M8 16l-4 -4l4 -4"></path>
+    <path d="M18 21v-6a3 3 0 0 0 -3 -3h-11"></path>
+  </g>,
+  tablerIconProps,
+);
+
 // tabler-icons: diamond
 export const ResourceNodeIcon = createIcon(
   <g strokeWidth="1.5">

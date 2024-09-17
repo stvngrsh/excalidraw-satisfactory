@@ -40,6 +40,7 @@ import type {
   ExcalidrawOilRefineryElement,
   ExcalidrawMergerElement,
   ExcalidrawSplitterElement,
+  ExcalidrawPipeElement,
 } from "./types";
 
 import type { Bounds } from "./bounds";
@@ -1399,6 +1400,7 @@ export const distanceToBindableElement = (
     case "waterExtractor":
     case "oilExtractor":
     case "resourceNode":
+    case "pipe":
       return distanceToEllipse(element, point, elementsMap);
   }
 };
@@ -1441,7 +1443,8 @@ const distanceToEllipse = (
     | ExcalidrawEllipseElement
     | ExcalidrawResourceNodeElement
     | ExcalidrawWaterExtractorElement
-    | ExcalidrawOilExtractorElement,
+    | ExcalidrawOilExtractorElement
+    | ExcalidrawPipeElement,
   point: GlobalPoint,
   elementsMap: ElementsMap,
 ): number => {
@@ -1454,7 +1457,8 @@ const ellipseParamsForTest = (
     | ExcalidrawEllipseElement
     | ExcalidrawResourceNodeElement
     | ExcalidrawWaterExtractorElement
-    | ExcalidrawOilExtractorElement,
+    | ExcalidrawOilExtractorElement
+    | ExcalidrawPipeElement,
   point: GlobalPoint,
   elementsMap: ElementsMap,
 ): [GA.Point, GA.Line] => {
@@ -1650,6 +1654,7 @@ const determineFocusPoint = (
     case "resourceNode":
     case "waterExtractor":
     case "oilExtractor":
+    case "pipe":
       point = findFocusPointForEllipse(element, focus, adjecentPointRel);
       break;
   }
@@ -1739,6 +1744,7 @@ const getSortedElementLineIntersections = (
     case "resourceNode":
     case "waterExtractor":
     case "oilExtractor":
+    case "pipe":
       intersections = getEllipseIntersections(element, gap, line);
       break;
   }
@@ -1848,7 +1854,8 @@ const getEllipseIntersections = (
     | ExcalidrawEllipseElement
     | ExcalidrawResourceNodeElement
     | ExcalidrawWaterExtractorElement
-    | ExcalidrawOilExtractorElement,
+    | ExcalidrawOilExtractorElement
+    | ExcalidrawPipeElement,
   gap: number,
   line: GA.Line,
 ): GA.Point[] => {
@@ -1912,7 +1919,8 @@ const findFocusPointForEllipse = (
     | ExcalidrawEllipseElement
     | ExcalidrawResourceNodeElement
     | ExcalidrawWaterExtractorElement
-    | ExcalidrawOilExtractorElement,
+    | ExcalidrawOilExtractorElement
+    | ExcalidrawPipeElement,
   // Between -1 and 1 (not 0) the relative size of the "focus image" of
   // the element on which the focus point lies
   relativeDistance: number,

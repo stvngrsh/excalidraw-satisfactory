@@ -185,6 +185,12 @@ export type ExcalidrawResourceNodeElement =
 
 export type ExcalidrawSplitterElement = _ExcalidrawElementBase & {
   type: "splitter";
+  mode: "manifold" | "balance";
+};
+
+export type ExcalidrawPipeElement = _ExcalidrawElementBase & {
+  type: "pipe";
+  mode: "manifold" | "balance";
 };
 
 export type ExcalidrawMergerElement = _ExcalidrawElementBase & {
@@ -306,6 +312,7 @@ export type ExcalidrawOverclockableElement =
 export type ExcalidrawSatisfactoryElement =
   | ExcalidrawOverclockableElement
   | ExcalidrawSplitterElement
+  | ExcalidrawPipeElement
   | ExcalidrawMergerElement;
 
 /**

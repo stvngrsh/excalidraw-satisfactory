@@ -228,6 +228,7 @@ export const getElementsCorners = (
         element.type === "ellipse" ||
         element.type === "resourceNode" ||
         element.type === "splitter" ||
+        element.type === "pipe" ||
         element.type === "merger" ||
         element.type === "waterExtractor" ||
         element.type === "oilExtractor") &&
@@ -1390,6 +1391,7 @@ export const isActiveToolNonLinearSnappable = (
     activeToolType === TOOL_TYPE.text ||
     activeToolType === TOOL_TYPE.resourceNode ||
     activeToolType === TOOL_TYPE.splitter ||
+    activeToolType === TOOL_TYPE.pipe ||
     activeToolType === TOOL_TYPE.merger ||
     activeToolType === TOOL_TYPE.constructor ||
     activeToolType === TOOL_TYPE.assembler ||

@@ -20,6 +20,7 @@ import type {
   ExcalidrawArrowElement,
   ExcalidrawResourceNodeElement,
   ExcalidrawSplitterElement,
+  ExcalidrawPipeElement,
   ExcalidrawMergerElement,
   ExcalidrawConstructorElement,
   ExcalidrawAssemblerElement,
@@ -242,17 +243,37 @@ export const newResourceNodeElement = (
 };
 
 export const newSplitterElement = (
-  opts: {} & ElementConstructorOpts,
+  opts: {
+    mode: "balance" | "manifold";
+  } & ElementConstructorOpts,
 ): NonDeleted<ExcalidrawSplitterElement> => {
   const splitterElement = newElementWith(
     {
       ..._newElementBase<ExcalidrawSplitterElement>("splitter", opts),
       type: "splitter",
+      mode: opts.mode,
     },
     {},
   );
 
   return splitterElement;
+};
+
+export const newPipeElement = (
+  opts: {
+    mode: "balance" | "manifold";
+  } & ElementConstructorOpts,
+): NonDeleted<ExcalidrawPipeElement> => {
+  const pipeElement = newElementWith(
+    {
+      ..._newElementBase<ExcalidrawPipeElement>("pipe", opts),
+      type: "pipe",
+      mode: opts.mode,
+    },
+    {},
+  );
+
+  return pipeElement;
 };
 
 export const newMergerElement = (

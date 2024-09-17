@@ -11,41 +11,41 @@ export const getResourceNodeStroke = (type: ResourceType) => {
 export const getResourceNodeFill = (type: ResourceType) => {
   switch (type) {
     case ResourceType.IronOre:
-      // gray
-      return "#808080";
+      return "#e9ecef";
     case ResourceType.CopperOre:
       // orange
-      return "#ff8000";
+      return "#ffd8a8";
     case ResourceType.Limestone:
       // tan
-      return "#ffbf80";
+      return "#fff4e6";
     case ResourceType.Coal:
       // dark gray
-      return "#404040";
+      return "#1e1e1e";
     case ResourceType.CateriumOre:
       // yellow
-      return "#ffff00";
+      return "#ffec99";
     case ResourceType.RawQuartz:
-      // pink
-      return "#ff0080";
+      // light pink
+      return "#fcc2d7";
     case ResourceType.Sulfur:
-      // dark yellow
-      return "#808000";
+      // light yellow
+      return "#fff9db";
     case ResourceType.Uranium:
       // green
-      return "#00ff00";
+      return "#b2f2bb";
     case ResourceType.Bauxite:
-      // brown
-      return "#a52a2a";
+      // light rust
+      return "#eaddd7";
     case ResourceType.SAM:
-      // purple
-      return "#800080";
+      // light purple
+      return "#d0bfff";
   }
 };
 
 export const getBuildingStroke = (type: string) => {
   switch (type) {
     case "merger":
+    case "pipe":
       // ficsit orange
       return "#ff8000";
     case "splitter":
@@ -60,16 +60,43 @@ export const getBuildingStroke = (type: string) => {
 export const getBuildingFill = (type: string) => {
   switch (type) {
     case "merger":
-      // light orange
-      return "#ffbf80";
     case "splitter":
-      // light gray
-      return "#d9d9d9";
+    case "constructor":
+    case "smelter":
+    case "assembler":
+    case "manufacturer":
+      return "#e9ecef";
+
     case "waterExtractor":
-      // blue
-      return "#0000ff";
+    case "packager":
+      return "#a5d8ff";
+
+    case "foundry":
+    case "coalGenerator":
+    case "pipe":
+      return "#ffd8a8";
+
+    case "fuelGenerator":
+      return "#ffc9c9";
+
+    case "oilRefinery":
+    case "oilExtractor":
+      return "#eaddd7";
+
     default:
-      // white
       return "#ffffff";
+  }
+};
+
+export const getBuildingFillStyle = (type: string) => {
+  switch (type) {
+    case "assembler":
+      return "hachure";
+    case "foundry":
+    case "fuelGenerator":
+    case "manufacturer":
+      return "cross-hatch";
+    default:
+      return "solid";
   }
 };
