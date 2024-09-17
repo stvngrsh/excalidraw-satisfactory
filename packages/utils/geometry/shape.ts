@@ -35,19 +35,33 @@ import {
 import { getElementAbsoluteCoords } from "../../excalidraw/element";
 import type {
   ElementsMap,
+  ExcalidrawAssemblerElement,
   ExcalidrawBindableElement,
+  ExcalidrawCoalGeneratorElement,
+  ExcalidrawConstructorElement,
   ExcalidrawDiamondElement,
   ExcalidrawElement,
   ExcalidrawEllipseElement,
   ExcalidrawEmbeddableElement,
+  ExcalidrawFoundryElement,
   ExcalidrawFrameLikeElement,
   ExcalidrawFreeDrawElement,
+  ExcalidrawFuelGeneratorElement,
   ExcalidrawIframeElement,
   ExcalidrawImageElement,
   ExcalidrawLinearElement,
+  ExcalidrawManufacturerElement,
+  ExcalidrawMergerElement,
+  ExcalidrawOilExtractorElement,
+  ExcalidrawOilRefineryElement,
+  ExcalidrawPackagerElement,
   ExcalidrawRectangleElement,
+  ExcalidrawResourceNodeElement,
   ExcalidrawSelectionElement,
+  ExcalidrawSmelterElement,
+  ExcalidrawSplitterElement,
   ExcalidrawTextElement,
+  ExcalidrawWaterExtractorElement,
 } from "../../excalidraw/element/types";
 import { pointsOnBezierCurves } from "points-on-curve";
 import type { Drawable, Op } from "roughjs/bin/core";
@@ -107,7 +121,18 @@ type RectangularElement =
   | ExcalidrawImageElement
   | ExcalidrawIframeElement
   | ExcalidrawTextElement
-  | ExcalidrawSelectionElement;
+  | ExcalidrawSelectionElement
+  | ExcalidrawConstructorElement
+  | ExcalidrawAssemblerElement
+  | ExcalidrawManufacturerElement
+  | ExcalidrawSplitterElement
+  | ExcalidrawMergerElement
+  | ExcalidrawSmelterElement
+  | ExcalidrawFoundryElement
+  | ExcalidrawCoalGeneratorElement
+  | ExcalidrawFuelGeneratorElement
+  | ExcalidrawOilRefineryElement
+  | ExcalidrawPackagerElement;
 
 // polygon
 export const getPolygonShape = <Point extends GlobalPoint | LocalPoint>(
@@ -122,7 +147,11 @@ export const getPolygonShape = <Point extends GlobalPoint | LocalPoint>(
 
   let data: Polygon<Point>;
 
-  if (element.type === "diamond") {
+  if (
+    element.type === "diamond" ||
+    element.type === "merger" ||
+    element.type === "splitter"
+  ) {
     data = polygon(
       pointRotateRads(point(cx, y), center, angle),
       pointRotateRads(point(x + width, cy), center, angle),
@@ -174,9 +203,15 @@ export const getSelectionBoxShape = <Point extends GlobalPoint | LocalPoint>(
   } as GeometricShape<Point>;
 };
 
+type CircularElement =
+  | ExcalidrawEllipseElement
+  | ExcalidrawResourceNodeElement
+  | ExcalidrawWaterExtractorElement
+  | ExcalidrawOilExtractorElement;
+
 // ellipse
 export const getEllipseShape = <Point extends GlobalPoint | LocalPoint>(
-  element: ExcalidrawEllipseElement,
+  element: CircularElement,
 ): GeometricShape<Point> => {
   const { width, height, angle, x, y } = element;
 

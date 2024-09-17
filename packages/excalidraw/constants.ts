@@ -2,6 +2,11 @@ import cssVariables from "./css/variables.module.scss";
 import type { AppProps, AppState } from "./types";
 import type { ExcalidrawElement, FontFamilyValues } from "./element/types";
 import { COLOR_PALETTE } from "./colors";
+import {
+  ResourcePurity,
+  ResourceType,
+  MinerTier,
+} from "./satisfactoryTypes/resourceNode";
 export const isDarwin = /Mac|iPod|iPhone|iPad/.test(navigator.platform);
 export const isWindows = /^Win/.test(navigator.platform);
 export const isAndroid = /\b(android)\b/i.test(navigator.userAgent);
@@ -166,6 +171,19 @@ export const DEFAULT_TEXT_ALIGN = "left";
 export const DEFAULT_VERTICAL_ALIGN = "top";
 export const DEFAULT_VERSION = "{version}";
 export const DEFAULT_TRANSFORM_HANDLE_SPACING = 2;
+export const DEFAULT_RESOURCE_TYPE = ResourceType.IronOre;
+export const DEFAULT_RESOURCE_PURITY = ResourcePurity.Normal;
+export const DEFAULT_MINER_TIER = MinerTier.Mk1;
+export const DEFAULT_SMELTER_RECIPE = "Smelter_IronIngot";
+export const DEFAULT_FOUNDRY_RECIPE = "Foundry_SteelIngot";
+export const DEFAULT_CONSTRUCTOR_RECIPE = "Constructor_IronPlate";
+export const DEFAULT_ASSEMBLER_RECIPE = "Assembler_ReinforcedIronPlate";
+export const DEFAULT_MANUFACTURER_RECIPE = "Manufacturer_HeavyModularFrame";
+export const DEFAULT_REFINERY_RECIPE = "Refinery_Fuel";
+export const DEFAULT_PACKAGER_RECIPE = "Packager_PackagedFuel";
+export const DEFAULT_COAL_GENERATOR_FUEL = "CoalGenerator_Coal";
+export const DEFAULT_FUEL_GENERATOR_FUEL = "FuelGenerator_Fuel";
+export const DEFAULT_CLOCK_SPEED = 100;
 
 export const SIDE_RESIZING_THRESHOLD = 2 * DEFAULT_TRANSFORM_HANDLE_SPACING;
 // a small epsilon to make side resizing always take precedence
@@ -407,6 +425,20 @@ export const TOOL_TYPE = {
   magicframe: "magicframe",
   embeddable: "embeddable",
   laser: "laser",
+  resourceNode: "resourceNode",
+  constructor: "constructor",
+  assembler: "assembler",
+  manufacturer: "manufacturer",
+  smelter: "smelter",
+  foundry: "foundry",
+  coalGenerator: "coalGenerator",
+  fuelGenerator: "fuelGenerator",
+  oilRefinery: "oilRefinery",
+  packager: "packager",
+  oilExtractor: "oilExtractor",
+  waterExtractor: "waterExtractor",
+  splitter: "splitter",
+  merger: "merger",
 } as const;
 
 export const EDITOR_LS_KEYS = {

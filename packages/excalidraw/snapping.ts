@@ -224,7 +224,13 @@ export const getElementsCorners = (
     const halfHeight = (y2 - y1) / 2;
 
     if (
-      (element.type === "diamond" || element.type === "ellipse") &&
+      (element.type === "diamond" ||
+        element.type === "ellipse" ||
+        element.type === "resourceNode" ||
+        element.type === "splitter" ||
+        element.type === "merger" ||
+        element.type === "waterExtractor" ||
+        element.type === "oilExtractor") &&
       !boundingBoxCorners
     ) {
       const leftMid = pointRotateRads<GlobalPoint>(
@@ -1381,7 +1387,21 @@ export const isActiveToolNonLinearSnappable = (
     activeToolType === TOOL_TYPE.frame ||
     activeToolType === TOOL_TYPE.magicframe ||
     activeToolType === TOOL_TYPE.image ||
-    activeToolType === TOOL_TYPE.text
+    activeToolType === TOOL_TYPE.text ||
+    activeToolType === TOOL_TYPE.resourceNode ||
+    activeToolType === TOOL_TYPE.splitter ||
+    activeToolType === TOOL_TYPE.merger ||
+    activeToolType === TOOL_TYPE.constructor ||
+    activeToolType === TOOL_TYPE.assembler ||
+    activeToolType === TOOL_TYPE.manufacturer ||
+    activeToolType === TOOL_TYPE.smelter ||
+    activeToolType === TOOL_TYPE.foundry ||
+    activeToolType === TOOL_TYPE.coalGenerator ||
+    activeToolType === TOOL_TYPE.fuelGenerator ||
+    activeToolType === TOOL_TYPE.packager ||
+    activeToolType === TOOL_TYPE.oilRefinery ||
+    activeToolType === TOOL_TYPE.oilExtractor ||
+    activeToolType === TOOL_TYPE.waterExtractor
   );
 };
 

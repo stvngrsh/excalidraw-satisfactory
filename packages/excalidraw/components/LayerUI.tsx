@@ -63,6 +63,7 @@ import { actionToggleStats } from "../actions";
 
 import "./LayerUI.scss";
 import "./Toolbar.scss";
+import { SatisfactoryToolbar } from "./SatisfactoryToolbar";
 
 interface LayerUIProps {
   actionManager: ActionManager;
@@ -290,11 +291,17 @@ const LayerUI = ({
                             title={t("toolBar.hand")}
                             isMobile
                           />
-
                           <ShapesSwitcher
                             appState={appState}
                             activeTool={appState.activeTool}
                             UIOptions={UIOptions}
+                            app={app}
+                          />
+                        </Stack.Row>
+                        <Stack.Row gap={1}>
+                          <SatisfactoryToolbar
+                            appState={appState}
+                            activeTool={appState.activeTool}
                             app={app}
                           />
                         </Stack.Row>

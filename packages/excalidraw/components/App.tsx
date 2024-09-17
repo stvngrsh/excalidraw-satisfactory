@@ -141,6 +141,20 @@ import {
   newMagicFrameElement,
   newIframeElement,
   newArrowElement,
+  newResourceNodeElement,
+  newSplitterElement,
+  newMergerElement,
+  newConstructorElement,
+  newAssemblerElement,
+  newManufacturerElement,
+  newSmelterElement,
+  newCoalGeneratorElement,
+  newOilExtractorElement,
+  newFoundryElement,
+  newFuelGeneratorElement,
+  newOilRefineryElement,
+  newPackagerElement,
+  newWaterExtractorElement,
 } from "../element/newElement";
 import {
   hasBoundTextElement,
@@ -185,6 +199,7 @@ import type {
   MagicGenerationData,
   ExcalidrawNonSelectionElement,
   ExcalidrawArrowElement,
+  ExcalidrawSatisfactoryElement,
 } from "../element/types";
 import { getCenter, getDistance } from "../gesture";
 import {
@@ -6254,6 +6269,61 @@ class App extends React.Component<AppProps, AppState> {
         pointerDownState.lastCoords.x,
         pointerDownState.lastCoords.y,
       );
+    } else if (this.state.activeTool.type === "resourceNode") {
+      this.createSatisfactoryElementOnPointerDown(
+        "resourceNode",
+        pointerDownState,
+      );
+    } else if (this.state.activeTool.type === "merger") {
+      this.createSatisfactoryElementOnPointerDown("merger", pointerDownState);
+    } else if (this.state.activeTool.type === "splitter") {
+      this.createSatisfactoryElementOnPointerDown("splitter", pointerDownState);
+    } else if (this.state.activeTool.type === "constructor") {
+      this.createSatisfactoryElementOnPointerDown(
+        "constructor",
+        pointerDownState,
+      );
+    } else if (this.state.activeTool.type === "assembler") {
+      this.createSatisfactoryElementOnPointerDown(
+        "assembler",
+        pointerDownState,
+      );
+    } else if (this.state.activeTool.type === "manufacturer") {
+      this.createSatisfactoryElementOnPointerDown(
+        "manufacturer",
+        pointerDownState,
+      );
+    } else if (this.state.activeTool.type === "smelter") {
+      this.createSatisfactoryElementOnPointerDown("smelter", pointerDownState);
+    } else if (this.state.activeTool.type === "foundry") {
+      this.createSatisfactoryElementOnPointerDown("foundry", pointerDownState);
+    } else if (this.state.activeTool.type === "coalGenerator") {
+      this.createSatisfactoryElementOnPointerDown(
+        "coalGenerator",
+        pointerDownState,
+      );
+    } else if (this.state.activeTool.type === "fuelGenerator") {
+      this.createSatisfactoryElementOnPointerDown(
+        "fuelGenerator",
+        pointerDownState,
+      );
+    } else if (this.state.activeTool.type === "oilRefinery") {
+      this.createSatisfactoryElementOnPointerDown(
+        "oilRefinery",
+        pointerDownState,
+      );
+    } else if (this.state.activeTool.type === "packager") {
+      this.createSatisfactoryElementOnPointerDown("packager", pointerDownState);
+    } else if (this.state.activeTool.type === "waterExtractor") {
+      this.createSatisfactoryElementOnPointerDown(
+        "waterExtractor",
+        pointerDownState,
+      );
+    } else if (this.state.activeTool.type === "oilExtractor") {
+      this.createSatisfactoryElementOnPointerDown(
+        "oilExtractor",
+        pointerDownState,
+      );
     } else if (
       this.state.activeTool.type !== "eraser" &&
       this.state.activeTool.type !== "hand"
@@ -7383,6 +7453,7 @@ class App extends React.Component<AppProps, AppState> {
       | "rectangle"
       | "diamond"
       | "ellipse"
+      | "resourceNode"
       | "iframe"
       | "embeddable",
   ) {
@@ -7394,6 +7465,144 @@ class App extends React.Component<AppProps, AppState> {
         }
       : null;
   }
+
+  private createSatisfactoryElementOnPointerDown = (
+    type: ExcalidrawSatisfactoryElement["type"],
+    pointerDownState: PointerDownState,
+  ): void => {
+    const [gridX, gridY] = getGridPoint(
+      pointerDownState.origin.x,
+      pointerDownState.origin.y,
+      this.lastPointerDownEvent?.[KEYS.CTRL_OR_CMD]
+        ? null
+        : this.getEffectiveGridSize(),
+    );
+
+    const topLayerFrame = this.getTopLayerFrameAtSceneCoords({
+      x: gridX,
+      y: gridY,
+    });
+
+    const baseElementAttributes = {
+      x: gridX,
+      y: gridY,
+      strokeColor: this.state.currentItemStrokeColor,
+      backgroundColor: this.state.currentItemBackgroundColor,
+      fillStyle: this.state.currentItemFillStyle,
+      strokeWidth: this.state.currentItemStrokeWidth,
+      strokeStyle: this.state.currentItemStrokeStyle,
+      roughness: this.state.currentItemRoughness,
+      opacity: this.state.currentItemOpacity,
+      roundness: this.getCurrentItemRoundness("rectangle"),
+      locked: false,
+      frameId: topLayerFrame ? topLayerFrame.id : null,
+    } as const;
+
+    let newElement: NonDeleted<ExcalidrawSatisfactoryElement>;
+    switch (type) {
+      case "resourceNode":
+        newElement = newResourceNodeElement({
+          ...baseElementAttributes,
+          clockSpeed: this.state.currentItemClockSpeed,
+          resourceNodeResourceType: this.state.currentItemResourceType,
+          resourceNodeResourcePurity: this.state.currentItemResourcePurity,
+          resourceNodeMinerTier: this.state.currentItemMinerTier,
+        });
+        break;
+      case "splitter":
+        newElement = newSplitterElement({
+          ...baseElementAttributes,
+        });
+        break;
+      case "merger":
+        newElement = newMergerElement({
+          ...baseElementAttributes,
+        });
+        break;
+      case "constructor":
+        newElement = newConstructorElement({
+          ...baseElementAttributes,
+          clockSpeed: this.state.currentItemClockSpeed,
+          recipe: this.state.currentItemConstructorRecipe,
+        });
+        break;
+      case "assembler":
+        newElement = newAssemblerElement({
+          ...baseElementAttributes,
+          clockSpeed: this.state.currentItemClockSpeed,
+          recipe: this.state.currentItemAssemblerRecipe,
+        });
+        break;
+      case "manufacturer":
+        newElement = newManufacturerElement({
+          ...baseElementAttributes,
+          clockSpeed: this.state.currentItemClockSpeed,
+          recipe: this.state.currentItemManufacturerRecipe,
+        });
+        break;
+      case "packager":
+        newElement = newPackagerElement({
+          ...baseElementAttributes,
+          clockSpeed: this.state.currentItemClockSpeed,
+          recipe: this.state.currentItemPackagerRecipe,
+        });
+        break;
+      case "foundry":
+        newElement = newFoundryElement({
+          ...baseElementAttributes,
+          clockSpeed: this.state.currentItemClockSpeed,
+          recipe: this.state.currentItemFoundryRecipe,
+        });
+        break;
+      case "smelter":
+        newElement = newSmelterElement({
+          ...baseElementAttributes,
+          clockSpeed: this.state.currentItemClockSpeed,
+          recipe: this.state.currentItemSmelterRecipe,
+        });
+        break;
+      case "coalGenerator":
+        newElement = newCoalGeneratorElement({
+          ...baseElementAttributes,
+          clockSpeed: this.state.currentItemClockSpeed,
+          fuel: this.state.currentItemCoalGeneratorFuel,
+        });
+        break;
+      case "fuelGenerator":
+        newElement = newFuelGeneratorElement({
+          ...baseElementAttributes,
+          clockSpeed: this.state.currentItemClockSpeed,
+          fuel: this.state.currentItemFuelGeneratorFuel,
+        });
+        break;
+      case "oilRefinery":
+        newElement = newOilRefineryElement({
+          ...baseElementAttributes,
+          clockSpeed: this.state.currentItemClockSpeed,
+          recipe: this.state.currentItemRefineryRecipe,
+        });
+        break;
+      case "waterExtractor":
+        newElement = newWaterExtractorElement({
+          ...baseElementAttributes,
+          clockSpeed: this.state.currentItemClockSpeed,
+        });
+        break;
+      case "oilExtractor":
+        newElement = newOilExtractorElement({
+          ...baseElementAttributes,
+          clockSpeed: this.state.currentItemClockSpeed,
+          purity: this.state.currentItemResourcePurity,
+        });
+        break;
+    }
+
+    this.scene.insertElement(newElement);
+    this.setState({
+      multiElement: null,
+      newElement: newElement,
+    });
+  };
 
   private createGenericElementOnPointerDown = (
     elementType: ExcalidrawGenericElement["type"] | "embeddable",

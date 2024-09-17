@@ -30,6 +30,22 @@ export {
   actionToggleTheme,
 } from "./actionCanvas";
 
+export {
+  actionChangeResourceNodeResourceType,
+  actionChangeResourceNodeResourcePurity,
+  actionChangeResourceNodeMinerTier,
+  actionChangeAssemblerRecipe,
+  actionChangeCoalGeneratorFuel,
+  actionChangeConstructorRecipe,
+  actionChangeFoundryRecipe,
+  actionChangeFuelGeneratorFuel,
+  actionChangeManufacturerRecipe,
+  actionChangeOilRefineryRecipe,
+  actionChangePackagerRecipe,
+  actionChangeSmelterRecipe,
+  actionClockSpeed,
+} from "./actionSatisfactory";
+
 export { actionFinalize } from "./actionFinalize";
 
 export {

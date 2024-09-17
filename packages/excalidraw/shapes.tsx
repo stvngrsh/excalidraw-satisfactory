@@ -155,6 +155,17 @@ export const getElementShape = <Point extends GlobalPoint | LocalPoint>(
     case "iframe":
     case "text":
     case "selection":
+    case "splitter":
+    case "merger":
+    case "constructor":
+    case "assembler":
+    case "manufacturer":
+    case "smelter":
+    case "foundry":
+    case "coalGenerator":
+    case "fuelGenerator":
+    case "packager":
+    case "oilRefinery":
       return getPolygonShape(element);
     case "arrow":
     case "line": {
@@ -180,6 +191,9 @@ export const getElementShape = <Point extends GlobalPoint | LocalPoint>(
     }
 
     case "ellipse":
+    case "resourceNode":
+    case "waterExtractor":
+    case "oilExtractor":
       return getEllipseShape(element);
 
     case "freedraw": {

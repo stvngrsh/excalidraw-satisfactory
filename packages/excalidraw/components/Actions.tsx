@@ -21,7 +21,24 @@ import type { AppClassProperties, AppProps, UIAppState, Zoom } from "../types";
 import { capitalizeString, isTransparent } from "../utils";
 import Stack from "./Stack";
 import { ToolButton } from "./ToolButton";
-import { hasStrokeColor, toolIsArrow } from "../scene/comparisons";
+import {
+  hasStrokeColor,
+  isAssembler,
+  isCoalGenerator,
+  isConstructor,
+  isFoundry,
+  isFuelGenerator,
+  isManufacturer,
+  isMerger,
+  isOilExtractor,
+  isOilRefinery,
+  isPackager,
+  isResourceNode,
+  isSmelter,
+  isSplitter,
+  isWaterExtractor,
+  toolIsArrow,
+} from "../scene/comparisons";
 import { trackEvent } from "../analytics";
 import {
   hasBoundTextElement,
@@ -67,10 +84,23 @@ export const canChangeStrokeColor = (
 
   return (
     (hasStrokeColor(appState.activeTool.type) &&
-      appState.activeTool.type !== "image" &&
       commonSelectedType !== "image" &&
       commonSelectedType !== "frame" &&
-      commonSelectedType !== "magicframe") ||
+      commonSelectedType !== "magicframe" &&
+      commonSelectedType !== "resourceNode" &&
+      commonSelectedType !== "splitter" &&
+      commonSelectedType !== "merger" &&
+      commonSelectedType !== "constructor" &&
+      commonSelectedType !== "assembler" &&
+      commonSelectedType !== "manufacturer" &&
+      commonSelectedType !== "smelter" &&
+      commonSelectedType !== "foundry" &&
+      commonSelectedType !== "coalGenerator" &&
+      commonSelectedType !== "fuelGenerator" &&
+      commonSelectedType !== "oilRefinery" &&
+      commonSelectedType !== "packager" &&
+      commonSelectedType !== "waterExtractor" &&
+      commonSelectedType !== "oilExtractor") ||
     targetElements.some((element) => hasStrokeColor(element.type))
   );
 };
@@ -129,6 +159,103 @@ export const SelectedShapeActions = ({
 
   return (
     <div className="panelColumn">
+      {(isResourceNode(appState.activeTool.type) ||
+        targetElements.some((element) => isResourceNode(element.type))) && (
+        <>
+          <div>{renderAction("changeResourceNodeResourceType")}</div>
+          <div>{renderAction("changeResourceNodeResourcePurity")}</div>
+          <div>{renderAction("changeResourceNodeMinerTier")}</div>
+          <div>{renderAction("changeClockSpeed")}</div>
+        </>
+      )}
+      {(isSplitter(appState.activeTool.type) ||
+        targetElements.some((element) => isSplitter(element.type))) && (
+        <>
+          <div>{t("labels.noOptions")}</div>
+        </>
+      )}
+      {(isMerger(appState.activeTool.type) ||
+        targetElements.some((element) => isMerger(element.type))) && (
+        <>
+          <div>{t("labels.noOptions")}</div>
+        </>
+      )}
+      {(isConstructor(appState.activeTool.type) ||
+        targetElements.some((element) => isConstructor(element.type))) && (
+        <>
+          <div>{renderAction("changeConstructorRecipe")}</div>
+          <div>{renderAction("changeClockSpeed")}</div>
+        </>
+      )}
+      {(isAssembler(appState.activeTool.type) ||
+        targetElements.some((element) => isAssembler(element.type))) && (
+        <>
+          <div>{renderAction("changeAssemblerRecipe")}</div>
+          <div>{renderAction("changeClockSpeed")}</div>
+        </>
+      )}
+      {(isManufacturer(appState.activeTool.type) ||
+        targetElements.some((element) => isManufacturer(element.type))) && (
+        <>
+          <div>{renderAction("changeManufacturerRecipe")}</div>
+          <div>{renderAction("changeClockSpeed")}</div>
+        </>
+      )}
+      {(isSmelter(appState.activeTool.type) ||
+        targetElements.some((element) => isSmelter(element.type))) && (
+        <>
+          <div>{renderAction("changeSmelterRecipe")}</div>
+          <div>{renderAction("changeClockSpeed")}</div>
+        </>
+      )}
+      {(isFoundry(appState.activeTool.type) ||
+        targetElements.some((element) => isFoundry(element.type))) && (
+        <>
+          <div>{renderAction("changeFoundryRecipe")}</div>
+          <div>{renderAction("changeClockSpeed")}</div>
+        </>
+      )}
+      {(isCoalGenerator(appState.activeTool.type) ||
+        targetElements.some((element) => isCoalGenerator(element.type))) && (
+        <>
+          <div>{renderAction("changeCoalGeneratorFuel")}</div>
+          <div>{renderAction("changeClockSpeed")}</div>
+        </>
+      )}
+      {(isFuelGenerator(appState.activeTool.type) ||
+        targetElements.some((element) => isFuelGenerator(element.type))) && (
+        <>
+          <div>{renderAction("changeFuelGeneratorFuel")}</div>
+          <div>{renderAction("changeClockSpeed")}</div>
+        </>
+      )}
+      {(isOilRefinery(appState.activeTool.type) ||
+        targetElements.some((element) => isOilRefinery(element.type))) && (
+        <>
+          <div>{renderAction("changeOilRefineryRecipe")}</div>
+          <div>{renderAction("changeClockSpeed")}</div>
+        </>
+      )}
+      {(isPackager(appState.activeTool.type) ||
+        targetElements.some((element) => isPackager(element.type))) && (
+        <>
+          <div>{renderAction("changePackagerRecipe")}</div>
+          <div>{renderAction("changeClockSpeed")}</div>
+        </>
+      )}
+      {(isWaterExtractor(appState.activeTool.type) ||
+        targetElements.some((element) => isOilExtractor(element.type))) && (
+        <>
+          <div>{renderAction("changeClockSpeed")}</div>
+        </>
+      )}
+      {(isOilExtractor(appState.activeTool.type) ||
+        targetElements.some((element) => isOilExtractor(element.type))) && (
+        <>
+          <div>{renderAction("changeResourceNodeResourcePurity")}</div>
+          <div>{renderAction("changeClockSpeed")}</div>
+        </>
+      )}
       <div>
         {canChangeStrokeColor(appState, targetElements) &&
           renderAction("changeStrokeColor")}
@@ -137,15 +264,12 @@ export const SelectedShapeActions = ({
         <div>{renderAction("changeBackgroundColor")}</div>
       )}
       {showFillIcons && renderAction("changeFillStyle")}
-
       {(hasStrokeWidth(appState.activeTool.type) ||
         targetElements.some((element) => hasStrokeWidth(element.type))) &&
         renderAction("changeStrokeWidth")}
-
       {(appState.activeTool.type === "freedraw" ||
         targetElements.some((element) => element.type === "freedraw")) &&
         renderAction("changeStrokeShape")}
-
       {(hasStrokeStyle(appState.activeTool.type) ||
         targetElements.some((element) => hasStrokeStyle(element.type))) && (
         <>
@@ -153,17 +277,14 @@ export const SelectedShapeActions = ({
           {renderAction("changeSloppiness")}
         </>
       )}
-
       {(canChangeRoundness(appState.activeTool.type) ||
         targetElements.some((element) => canChangeRoundness(element.type))) && (
         <>{renderAction("changeRoundness")}</>
       )}
-
       {(toolIsArrow(appState.activeTool.type) ||
         targetElements.some((element) => toolIsArrow(element.type))) && (
         <>{renderAction("changeArrowType")}</>
       )}
-
       {(appState.activeTool.type === "text" ||
         targetElements.some(isTextElement)) && (
         <>
@@ -174,16 +295,13 @@ export const SelectedShapeActions = ({
             renderAction("changeTextAlign")}
         </>
       )}
-
       {shouldAllowVerticalAlign(targetElements, elementsMap) &&
         renderAction("changeVerticalAlign")}
       {(canHaveArrowheads(appState.activeTool.type) ||
         targetElements.some((element) => canHaveArrowheads(element.type))) && (
         <>{renderAction("changeArrowhead")}</>
       )}
-
       {renderAction("changeOpacity")}
-
       <fieldset>
         <legend>{t("labels.layers")}</legend>
         <div className="buttonList">
@@ -193,7 +311,6 @@ export const SelectedShapeActions = ({
           {renderAction("bringToFront")}
         </div>
       </fieldset>
-
       {targetElements.length > 1 && !isSingleElementBoundContainer && (
         <fieldset>
           <legend>{t("labels.align")}</legend>
@@ -352,8 +469,8 @@ export const ShapesSwitcher = ({
                 position: "absolute",
                 background: "var(--color-promo)",
                 color: "var(--color-surface-lowest)",
-                bottom: 3,
-                right: 4,
+                bottom: 0,
+                right: 0,
               }}
             >
               AI

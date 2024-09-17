@@ -6,6 +6,20 @@ import type {
   THEME,
   VERTICAL_ALIGN,
 } from "../constants";
+import { assemblerRecipes } from "../satisfactoryTypes/assembler";
+import { coalGeneratorFuels } from "../satisfactoryTypes/coalGenerator";
+import { constructorRecipes } from "../satisfactoryTypes/constructor";
+import { foundryRecipes } from "../satisfactoryTypes/foundry";
+import { fuelGeneratorFuels } from "../satisfactoryTypes/fuelGenerator";
+import { manufacturerRecipes } from "../satisfactoryTypes/manufacturer";
+import { packagerRecipes } from "../satisfactoryTypes/packager";
+import { refineryRecipes } from "../satisfactoryTypes/refineryRecipes";
+import {
+  MinerTier,
+  ResourcePurity,
+  ResourceType,
+} from "../satisfactoryTypes/resourceNode";
+import { smelterRecipes } from "../satisfactoryTypes/smelter";
 import type {
   MakeBrand,
   MarkNonNullable,
@@ -161,6 +175,88 @@ export type ExcalidrawFrameLikeElement =
   | ExcalidrawFrameElement
   | ExcalidrawMagicFrameElement;
 
+export type ExcalidrawResourceNodeElement =
+  _ExcalidrawSatisfactoryBuildingBase & {
+    type: "resourceNode";
+    resourceNodeResourceType: ResourceType;
+    resourceNodeResourcePurity: ResourcePurity;
+    resourceNodeMinerTier: MinerTier;
+  };
+
+export type ExcalidrawSplitterElement = _ExcalidrawElementBase & {
+  type: "splitter";
+};
+
+export type ExcalidrawMergerElement = _ExcalidrawElementBase & {
+  type: "merger";
+};
+
+export type _ExcalidrawSatisfactoryBuildingBase = {
+  clockSpeed: number;
+} & _ExcalidrawElementBase;
+
+export type ExcalidrawConstructorElement =
+  _ExcalidrawSatisfactoryBuildingBase & {
+    type: "constructor";
+    recipe: string;
+  };
+
+export type ExcalidrawAssemblerElement = _ExcalidrawSatisfactoryBuildingBase & {
+  type: "assembler";
+  recipe: string;
+};
+
+export type ExcalidrawManufacturerElement =
+  _ExcalidrawSatisfactoryBuildingBase & {
+    type: "manufacturer";
+    recipe: string;
+  };
+
+export type ExcalidrawSmelterElement = _ExcalidrawSatisfactoryBuildingBase & {
+  type: "smelter";
+  recipe: string;
+};
+
+export type ExcalidrawFoundryElement = _ExcalidrawSatisfactoryBuildingBase & {
+  type: "foundry";
+  recipe: string;
+};
+
+export type ExcalidrawCoalGeneratorElement =
+  _ExcalidrawSatisfactoryBuildingBase & {
+    type: "coalGenerator";
+    fuel: string;
+  };
+
+export type ExcalidrawFuelGeneratorElement =
+  _ExcalidrawSatisfactoryBuildingBase & {
+    type: "fuelGenerator";
+    fuel: string;
+  };
+
+export type ExcalidrawOilRefineryElement =
+  _ExcalidrawSatisfactoryBuildingBase & {
+    type: "oilRefinery";
+    recipe: string;
+  };
+
+export type ExcalidrawPackagerElement = _ExcalidrawSatisfactoryBuildingBase & {
+  type: "packager";
+  recipe: string;
+};
+
+export type ExcalidrawWaterExtractorElement =
+  _ExcalidrawSatisfactoryBuildingBase & {
+    type: "waterExtractor";
+    str?: string;
+  };
+
+export type ExcalidrawOilExtractorElement =
+  _ExcalidrawSatisfactoryBuildingBase & {
+    type: "oilExtractor";
+    purity: ResourcePurity;
+  };
+
 /**
  * These are elements that don't have any additional properties.
  */
@@ -182,7 +278,35 @@ export type ExcalidrawRectanguloidElement =
   | ExcalidrawFreeDrawElement
   | ExcalidrawIframeLikeElement
   | ExcalidrawFrameLikeElement
-  | ExcalidrawEmbeddableElement;
+  | ExcalidrawEmbeddableElement
+  | ExcalidrawConstructorElement
+  | ExcalidrawAssemblerElement
+  | ExcalidrawManufacturerElement
+  | ExcalidrawSmelterElement
+  | ExcalidrawFoundryElement
+  | ExcalidrawCoalGeneratorElement
+  | ExcalidrawFuelGeneratorElement
+  | ExcalidrawOilRefineryElement
+  | ExcalidrawPackagerElement;
+
+export type ExcalidrawOverclockableElement =
+  | ExcalidrawResourceNodeElement
+  | ExcalidrawConstructorElement
+  | ExcalidrawAssemblerElement
+  | ExcalidrawManufacturerElement
+  | ExcalidrawSmelterElement
+  | ExcalidrawFoundryElement
+  | ExcalidrawCoalGeneratorElement
+  | ExcalidrawFuelGeneratorElement
+  | ExcalidrawOilRefineryElement
+  | ExcalidrawPackagerElement
+  | ExcalidrawWaterExtractorElement
+  | ExcalidrawOilExtractorElement;
+
+export type ExcalidrawSatisfactoryElement =
+  | ExcalidrawOverclockableElement
+  | ExcalidrawSplitterElement
+  | ExcalidrawMergerElement;
 
 /**
  * ExcalidrawElement should be JSON serializable and (eventually) contain
@@ -198,7 +322,8 @@ export type ExcalidrawElement =
   | ExcalidrawFrameElement
   | ExcalidrawMagicFrameElement
   | ExcalidrawIframeElement
-  | ExcalidrawEmbeddableElement;
+  | ExcalidrawEmbeddableElement
+  | ExcalidrawSatisfactoryElement;
 
 export type ExcalidrawNonSelectionElement = Exclude<
   ExcalidrawElement,
@@ -250,7 +375,8 @@ export type ExcalidrawBindableElement =
   | ExcalidrawIframeElement
   | ExcalidrawEmbeddableElement
   | ExcalidrawFrameElement
-  | ExcalidrawMagicFrameElement;
+  | ExcalidrawMagicFrameElement
+  | ExcalidrawSatisfactoryElement;
 
 export type ExcalidrawTextContainer =
   | ExcalidrawRectangleElement

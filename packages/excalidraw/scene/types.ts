@@ -145,4 +145,18 @@ export type ElementShapes = {
   image: null;
   frame: null;
   magicframe: null;
+  splitter: Drawable;
+  merger: Drawable;
+  resourceNode: Drawable;
+  constructor: Drawable;
+  assembler: Drawable;
+  manufacturer: Drawable;
+  smelter: Drawable;
+  foundry: Drawable;
+  coalGenerator: Drawable;
+  fuelGenerator: Drawable;
+  oilRefinery: Drawable;
+  packager: Drawable;
+  oilExtractor: Drawable;
+  waterExtractor: Drawable;
 };

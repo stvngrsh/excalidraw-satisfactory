@@ -9,6 +9,20 @@ import type {
   ExcalidrawFrameElement,
   ExcalidrawElementType,
   ExcalidrawMagicFrameElement,
+  ExcalidrawResourceNodeElement,
+  ExcalidrawSplitterElement,
+  ExcalidrawMergerElement,
+  ExcalidrawConstructorElement,
+  ExcalidrawFoundryElement,
+  ExcalidrawAssemblerElement,
+  ExcalidrawManufacturerElement,
+  ExcalidrawCoalGeneratorElement,
+  ExcalidrawFuelGeneratorElement,
+  ExcalidrawOilExtractorElement,
+  ExcalidrawWaterExtractorElement,
+  ExcalidrawOilRefineryElement,
+  ExcalidrawPackagerElement,
+  ExcalidrawSmelterElement
 } from "../../element/types";
 import { newElement, newTextElement, newLinearElement } from "../../element";
 import { DEFAULT_VERTICAL_ALIGN, ROUNDNESS } from "../../constants";
@@ -26,6 +40,20 @@ import {
   newIframeElement,
   newImageElement,
   newMagicFrameElement,
+  newResourceNodeElement,
+  newSplitterElement,
+  newMergerElement,
+  newConstructorElement,
+  newAssemblerElement,
+  newManufacturerElement,
+  newSmelterElement,
+  newFoundryElement,
+  newCoalGeneratorElement,
+  newFuelGeneratorElement,
+  newPackagerElement,
+  newOilExtractorElement,
+  newOilRefineryElement,
+  newWaterExtractorElement
 } from "../../element/newElement";
 import type { AppState } from "../../types";
 import { getSelectedElements } from "../../scene/selection";
@@ -330,6 +358,77 @@ export class API {
       case "magicframe":
         element = newMagicFrameElement({ ...base, width, height });
         break;
+      case "resourceNode":
+        element = newResourceNodeElement({
+          ...base as ExcalidrawResourceNodeElement
+        });
+        break;
+      case "splitter":
+        element = newSplitterElement({
+          ...base as ExcalidrawSplitterElement
+        });
+        break;
+      case "merger":
+        element = newMergerElement({
+          ...base as ExcalidrawMergerElement
+        });
+        break;
+      case "constructor":
+        element = newConstructorElement({
+          ...base as ExcalidrawConstructorElement
+        });
+        break;
+      case "foundry":
+        element = newFoundryElement({
+          ...base as ExcalidrawFoundryElement
+        });
+        break;
+      case "assembler":
+        element = newAssemblerElement({
+          ...base as ExcalidrawAssemblerElement
+        });
+        break;
+      case "manufacturer":
+        element = newManufacturerElement({
+          ...base as ExcalidrawManufacturerElement
+        });
+        break;
+      case "smelter":
+        element = newSmelterElement({
+          ...base as ExcalidrawSmelterElement
+        });
+        break;
+      case "coalGenerator":
+        element = newCoalGeneratorElement({
+          ...base as ExcalidrawCoalGeneratorElement
+        });
+        break;
+      case "fuelGenerator":
+        element = newFuelGeneratorElement({
+          ...base as ExcalidrawFuelGeneratorElement
+        });
+        break;
+      case "oilExtractor":
+        element = newOilExtractorElement({
+          ...base as ExcalidrawOilExtractorElement
+        });
+        break;
+      case "waterExtractor":
+        element = newWaterExtractorElement({
+          ...base as ExcalidrawWaterExtractorElement
+        });
+        break;
+      case "oilRefinery":
+        element = newOilRefineryElement({
+          ...base as ExcalidrawOilRefineryElement
+        });
+        break;
+      case "packager":
+        element = newPackagerElement({
+          ...base as ExcalidrawPackagerElement
+        });
+        break;
+
       default:
         assertNever(
           type,

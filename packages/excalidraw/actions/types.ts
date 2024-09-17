@@ -138,7 +138,20 @@ export type ActionName =
   | "commandPalette"
   | "autoResize"
   | "elementStats"
-  | "searchMenu";
+  | "searchMenu"
+  | "changeResourceNodeResourceType"
+  | "changeResourceNodeResourcePurity"
+  | "changeResourceNodeMinerTier"
+  | "changeConstructorRecipe"
+  | "changeAssemblerRecipe"
+  | "changeManufacturerRecipe"
+  | "changeSmelterRecipe"
+  | "changeFoundryRecipe"
+  | "changeOilRefineryRecipe"
+  | "changePackagerRecipe"
+  | "changeCoalGeneratorFuel"
+  | "changeFuelGeneratorFuel"
+  | "changeClockSpeed";
 
 export type PanelComponentProps = {
   elements: readonly ExcalidrawElement[];

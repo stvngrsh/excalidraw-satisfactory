@@ -128,7 +128,11 @@ export class ElementBounds {
       ];
     } else if (isLinearElement(element)) {
       bounds = getLinearElementRotatedBounds(element, cx, cy, elementsMap);
-    } else if (element.type === "diamond") {
+    } else if (
+      element.type === "diamond" ||
+      element.type === "merger" ||
+      element.type === "splitter"
+    ) {
       const [x11, y11] = pointRotateRads(
         point(cx, y1),
         point(cx, cy),
@@ -154,7 +158,12 @@ export class ElementBounds {
       const maxX = Math.max(x11, x12, x22, x21);
       const maxY = Math.max(y11, y12, y22, y21);
       bounds = [minX, minY, maxX, maxY];
-    } else if (element.type === "ellipse") {
+    } else if (
+      element.type === "ellipse" ||
+      element.type === "resourceNode" ||
+      element.type === "waterExtractor" ||
+      element.type === "oilExtractor"
+    ) {
       const w = (x2 - x1) / 2;
       const h = (y2 - y1) / 2;
       const cos = Math.cos(element.angle);
@@ -311,7 +320,7 @@ export const getElementLineSegments = (
     ];
   }
 
-  if (element.type === "ellipse") {
+  if (element.type === "ellipse" || element.type === "resourceNode") {
     return [
       lineSegment(n, w),
       lineSegment(n, e),

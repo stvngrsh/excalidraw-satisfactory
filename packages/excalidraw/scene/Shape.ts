@@ -30,6 +30,12 @@ import {
   type LocalPoint,
 } from "../../math";
 import { getCornerRadius, isPathALoop } from "../shapes";
+import {
+  getBuildingFill,
+  getBuildingStroke,
+  getResourceNodeFill,
+  getResourceNodeStroke,
+} from "./satisfactoryStyles";
 
 const getDashArrayDashed = (strokeWidth: number) => [8, 8 + strokeWidth];
 
@@ -103,6 +109,40 @@ export const generateRoughOptions = (
       if (element.type === "ellipse") {
         options.curveFitting = 1;
       }
+      return options;
+    }
+    case "splitter":
+    case "merger":
+    case "constructor":
+    case "assembler":
+    case "manufacturer":
+    case "smelter":
+    case "foundry":
+    case "coalGenerator":
+    case "fuelGenerator":
+    case "oilRefinery":
+    case "packager":
+    case "oilExtractor":
+    case "waterExtractor": {
+      options.stroke = getBuildingStroke(element.type);
+      options.fillStyle = "solid";
+      options.fill = getBuildingFill(element.type);
+
+      if (
+        element.type === "waterExtractor" ||
+        element.type === "oilExtractor"
+      ) {
+        options.curveFitting = 1;
+      }
+
+      return options;
+    }
+    case "resourceNode": {
+      options.stroke = getResourceNodeStroke(element.resourceNodeResourceType);
+      options.fillStyle = "solid";
+      options.fill = getResourceNodeFill(element.resourceNodeResourceType);
+      options.curveFitting = 1;
+
       return options;
     }
     case "line":
@@ -300,7 +340,16 @@ export const _generateElementShape = (
   switch (element.type) {
     case "rectangle":
     case "iframe":
-    case "embeddable": {
+    case "embeddable":
+    case "constructor":
+    case "assembler":
+    case "manufacturer":
+    case "smelter":
+    case "foundry":
+    case "coalGenerator":
+    case "fuelGenerator":
+    case "oilRefinery":
+    case "packager": {
       let shape: ElementShapes[typeof element.type];
       // this is for rendering the stroke/bg of the embeddable, especially
       // when the src url is not set
@@ -342,6 +391,8 @@ export const _generateElementShape = (
       }
       return shape;
     }
+    case "merger":
+    case "splitter":
     case "diamond": {
       let shape: ElementShapes[typeof element.type];
 
@@ -389,6 +440,9 @@ export const _generateElementShape = (
       }
       return shape;
     }
+    case "waterExtractor":
+    case "oilExtractor":
+    case "resourceNode":
     case "ellipse": {
       const shape: ElementShapes[typeof element.type] = generator.ellipse(
         element.width / 2,

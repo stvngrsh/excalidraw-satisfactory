@@ -138,7 +138,21 @@ const renderElementToSvg = (
     }
     case "rectangle":
     case "diamond":
-    case "ellipse": {
+    case "ellipse":
+    case "merger":
+    case "splitter":
+    case "constructor":
+    case "assembler":
+    case "manufacturer":
+    case "smelter":
+    case "foundry":
+    case "coalGenerator":
+    case "fuelGenerator":
+    case "oilRefinery":
+    case "packager":
+    case "oilExtractor":
+    case "waterExtractor":
+    case "resourceNode": {
       const shape = ShapeCache.generateElementShape(element, null);
       const node = roughSVGDrawWithPrecision(
         rsvg,

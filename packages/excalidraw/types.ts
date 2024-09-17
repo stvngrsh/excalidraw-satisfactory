@@ -41,6 +41,11 @@ import type { ContextMenuItems } from "./components/ContextMenu";
 import type { SnapLine } from "./snapping";
 import type { Merge, MaybePromise, ValueOf, MakeBrand } from "./utility-types";
 import type { StoreActionType } from "./store";
+import {
+  ResourcePurity,
+  ResourceType,
+  MinerTier,
+} from "./satisfactoryTypes/resourceNode";
 
 export type SocketId = string & { _brand: "SocketId" };
 
@@ -127,7 +132,21 @@ export type ToolType =
   | "frame"
   | "magicframe"
   | "embeddable"
-  | "laser";
+  | "laser"
+  | "resourceNode"
+  | "splitter"
+  | "merger"
+  | "constructor"
+  | "assembler"
+  | "manufacturer"
+  | "smelter"
+  | "foundry"
+  | "coalGenerator"
+  | "fuelGenerator"
+  | "packager"
+  | "oilRefinery"
+  | "waterExtractor"
+  | "oilExtractor";
 
 export type ElementOrToolType = ExcalidrawElementType | ToolType | "custom";
 
@@ -300,6 +319,19 @@ export interface AppState {
   currentHoveredFontFamily: FontFamilyValues | null;
   currentItemRoundness: StrokeRoundness;
   currentItemArrowType: "sharp" | "round" | "elbow";
+  currentItemResourceType: ResourceType;
+  currentItemResourcePurity: ResourcePurity;
+  currentItemMinerTier: MinerTier;
+  currentItemSmelterRecipe: string;
+  currentItemFoundryRecipe: string;
+  currentItemConstructorRecipe: string;
+  currentItemAssemblerRecipe: string;
+  currentItemManufacturerRecipe: string;
+  currentItemRefineryRecipe: string;
+  currentItemPackagerRecipe: string;
+  currentItemCoalGeneratorFuel: string;
+  currentItemFuelGeneratorFuel: string;
+  currentItemClockSpeed: number;
   viewBackgroundColor: string;
   scrollX: number;
   scrollY: number;

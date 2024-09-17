@@ -18,6 +18,20 @@ import type {
   ExcalidrawIframeElement,
   ElementsMap,
   ExcalidrawArrowElement,
+  ExcalidrawResourceNodeElement,
+  ExcalidrawSplitterElement,
+  ExcalidrawMergerElement,
+  ExcalidrawConstructorElement,
+  ExcalidrawAssemblerElement,
+  ExcalidrawManufacturerElement,
+  ExcalidrawSmelterElement,
+  ExcalidrawFoundryElement,
+  ExcalidrawCoalGeneratorElement,
+  ExcalidrawFuelGeneratorElement,
+  ExcalidrawOilRefineryElement,
+  ExcalidrawWaterExtractorElement,
+  ExcalidrawOilExtractorElement,
+  ExcalidrawPackagerElement,
 } from "./types";
 import {
   arrayToMap,
@@ -48,6 +62,19 @@ import {
 import type { MarkOptional, Merge, Mutable } from "../utility-types";
 import { getLineHeight } from "../fonts";
 import type { Radians } from "../../math";
+import {
+  MinerTier,
+  ResourcePurity,
+  ResourceType,
+} from "../satisfactoryTypes/resourceNode";
+import { constructorRecipes } from "../satisfactoryTypes/constructor";
+import { assemblerRecipes } from "../satisfactoryTypes/assembler";
+import { manufacturerRecipes } from "../satisfactoryTypes/manufacturer";
+import { smelterRecipes } from "../satisfactoryTypes/smelter";
+import { foundryRecipes } from "../satisfactoryTypes/foundry";
+import { coalGeneratorFuels } from "../satisfactoryTypes/coalGenerator";
+import { fuelGeneratorFuels } from "../satisfactoryTypes/fuelGenerator";
+import { refineryRecipes } from "../satisfactoryTypes/refineryRecipes";
 
 export type ElementConstructorOpts = MarkOptional<
   Omit<ExcalidrawGenericElement, "id" | "type" | "isDeleted" | "updated">,
@@ -189,6 +216,267 @@ export const newMagicFrameElement = (
   );
 
   return frameElement;
+};
+
+export const newResourceNodeElement = (
+  opts: {
+    clockSpeed: number;
+    resourceNodeResourceType: ResourceType;
+    resourceNodeResourcePurity: ResourcePurity;
+    resourceNodeMinerTier: MinerTier;
+  } & ElementConstructorOpts,
+): NonDeleted<ExcalidrawResourceNodeElement> => {
+  const resourceNodeElement = newElementWith(
+    {
+      ..._newElementBase<ExcalidrawResourceNodeElement>("resourceNode", opts),
+      type: "resourceNode",
+      clockSpeed: opts.clockSpeed,
+      resourceNodeResourceType: opts.resourceNodeResourceType,
+      resourceNodeResourcePurity: opts.resourceNodeResourcePurity,
+      resourceNodeMinerTier: opts.resourceNodeMinerTier,
+    },
+    {},
+  );
+
+  return resourceNodeElement;
+};
+
+export const newSplitterElement = (
+  opts: {} & ElementConstructorOpts,
+): NonDeleted<ExcalidrawSplitterElement> => {
+  const splitterElement = newElementWith(
+    {
+      ..._newElementBase<ExcalidrawSplitterElement>("splitter", opts),
+      type: "splitter",
+    },
+    {},
+  );
+
+  return splitterElement;
+};
+
+export const newMergerElement = (
+  opts: {} & ElementConstructorOpts,
+): NonDeleted<ExcalidrawMergerElement> => {
+  const mergerElement = newElementWith(
+    {
+      ..._newElementBase<ExcalidrawMergerElement>("merger", opts),
+      type: "merger",
+    },
+    {},
+  );
+
+  return mergerElement;
+};
+
+export const newConstructorElement = (
+  opts: {
+    recipe: string;
+    clockSpeed: number;
+  } & ElementConstructorOpts,
+): NonDeleted<ExcalidrawConstructorElement> => {
+  const constructorElement = newElementWith(
+    {
+      ..._newElementBase<ExcalidrawConstructorElement>("constructor", opts),
+      type: "constructor",
+      recipe: opts.recipe,
+      clockSpeed: opts.clockSpeed,
+    },
+    {},
+  );
+
+  return constructorElement;
+};
+
+export const newAssemblerElement = (
+  opts: {
+    recipe: string;
+    clockSpeed: number;
+  } & ElementConstructorOpts,
+): NonDeleted<ExcalidrawAssemblerElement> => {
+  const assemblerElement = newElementWith(
+    {
+      ..._newElementBase<ExcalidrawAssemblerElement>("assembler", opts),
+      type: "assembler",
+      recipe: opts.recipe,
+      clockSpeed: opts.clockSpeed,
+    },
+    {},
+  );
+
+  return assemblerElement;
+};
+
+export const newManufacturerElement = (
+  opts: {
+    recipe: string;
+    clockSpeed: number;
+  } & ElementConstructorOpts,
+): NonDeleted<ExcalidrawManufacturerElement> => {
+  const manufacturerElement = newElementWith(
+    {
+      ..._newElementBase<ExcalidrawManufacturerElement>("manufacturer", opts),
+      type: "manufacturer",
+      recipe: opts.recipe,
+      clockSpeed: opts.clockSpeed,
+    },
+    {},
+  );
+
+  return manufacturerElement;
+};
+
+export const newSmelterElement = (
+  opts: {
+    recipe: string;
+    clockSpeed: number;
+  } & ElementConstructorOpts,
+): NonDeleted<ExcalidrawSmelterElement> => {
+  const smelterElement = newElementWith(
+    {
+      ..._newElementBase<ExcalidrawSmelterElement>("smelter", opts),
+      type: "smelter",
+      recipe: opts.recipe,
+      clockSpeed: opts.clockSpeed,
+    },
+    {},
+  );
+
+  return smelterElement;
+};
+
+export const newFoundryElement = (
+  opts: {
+    recipe: string;
+    clockSpeed: number;
+  } & ElementConstructorOpts,
+): NonDeleted<ExcalidrawFoundryElement> => {
+  const foundryElement = newElementWith(
+    {
+      ..._newElementBase<ExcalidrawFoundryElement>("foundry", opts),
+      type: "foundry",
+      recipe: opts.recipe,
+      clockSpeed: opts.clockSpeed,
+    },
+    {},
+  );
+
+  return foundryElement;
+};
+
+export const newCoalGeneratorElement = (
+  opts: {
+    fuel: string;
+    clockSpeed: number;
+  } & ElementConstructorOpts,
+): NonDeleted<ExcalidrawCoalGeneratorElement> => {
+  const coalGeneratorElement = newElementWith(
+    {
+      ..._newElementBase<ExcalidrawCoalGeneratorElement>("coalGenerator", opts),
+      type: "coalGenerator",
+      fuel: opts.fuel,
+      clockSpeed: opts.clockSpeed,
+    },
+    {},
+  );
+
+  return coalGeneratorElement;
+};
+
+export const newFuelGeneratorElement = (
+  opts: {
+    fuel: string;
+    clockSpeed: number;
+  } & ElementConstructorOpts,
+): NonDeleted<ExcalidrawFuelGeneratorElement> => {
+  const fuelGeneratorElement = newElementWith(
+    {
+      ..._newElementBase<ExcalidrawFuelGeneratorElement>("fuelGenerator", opts),
+      type: "fuelGenerator",
+      fuel: opts.fuel,
+      clockSpeed: opts.clockSpeed,
+    },
+    {},
+  );
+
+  return fuelGeneratorElement;
+};
+
+export const newOilRefineryElement = (
+  opts: {
+    recipe: string;
+    clockSpeed: number;
+  } & ElementConstructorOpts,
+): NonDeleted<ExcalidrawOilRefineryElement> => {
+  const oilRefineryElement = newElementWith(
+    {
+      ..._newElementBase<ExcalidrawOilRefineryElement>("oilRefinery", opts),
+      type: "oilRefinery",
+      recipe: opts.recipe,
+      clockSpeed: opts.clockSpeed,
+    },
+    {},
+  );
+
+  return oilRefineryElement;
+};
+
+export const newWaterExtractorElement = (
+  opts: {
+    clockSpeed: number;
+  } & ElementConstructorOpts,
+): NonDeleted<ExcalidrawWaterExtractorElement> => {
+  const waterExtractorElement = newElementWith(
+    {
+      ..._newElementBase<ExcalidrawWaterExtractorElement>(
+        "waterExtractor",
+        opts,
+      ),
+      type: "waterExtractor",
+      clockSpeed: opts.clockSpeed,
+    },
+    {},
+  );
+
+  return waterExtractorElement;
+};
+
+export const newOilExtractorElement = (
+  opts: {
+    clockSpeed: number;
+    purity: ResourcePurity;
+  } & ElementConstructorOpts,
+): NonDeleted<ExcalidrawOilExtractorElement> => {
+  const oilExtractorElement = newElementWith(
+    {
+      ..._newElementBase<ExcalidrawOilExtractorElement>("oilExtractor", opts),
+      type: "oilExtractor",
+      clockSpeed: opts.clockSpeed,
+      purity: opts.purity,
+    },
+    {},
+  );
+
+  return oilExtractorElement;
+};
+
+export const newPackagerElement = (
+  opts: {
+    recipe: string;
+    clockSpeed: number;
+  } & ElementConstructorOpts,
+): NonDeleted<ExcalidrawPackagerElement> => {
+  const packagerElement = newElementWith(
+    {
+      ..._newElementBase<ExcalidrawPackagerElement>("packager", opts),
+      type: "packager",
+      recipe: opts.recipe,
+      clockSpeed: opts.clockSpeed,
+    },
+    {},
+  );
+
+  return packagerElement;
 };
 
 /** computes element x/y offset based on textAlign/verticalAlign */

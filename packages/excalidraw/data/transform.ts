@@ -14,26 +14,54 @@ import { bindLinearElement } from "../element/binding";
 import type { ElementConstructorOpts } from "../element/newElement";
 import {
   newArrowElement,
+  newAssemblerElement,
+  newCoalGeneratorElement,
+  newConstructorElement,
+  newFoundryElement,
   newFrameElement,
+  newFuelGeneratorElement,
   newImageElement,
   newMagicFrameElement,
+  newManufacturerElement,
+  newMergerElement,
+  newOilExtractorElement,
+  newOilRefineryElement,
+  newPackagerElement,
+  newResourceNodeElement,
+  newSmelterElement,
+  newSplitterElement,
   newTextElement,
+  newWaterExtractorElement,
 } from "../element/newElement";
 import { measureText, normalizeText } from "../element/textElement";
 import type {
   ElementsMap,
   ExcalidrawArrowElement,
+  ExcalidrawAssemblerElement,
   ExcalidrawBindableElement,
+  ExcalidrawCoalGeneratorElement,
+  ExcalidrawConstructorElement,
   ExcalidrawElement,
+  ExcalidrawFoundryElement,
   ExcalidrawFrameElement,
   ExcalidrawFreeDrawElement,
+  ExcalidrawFuelGeneratorElement,
   ExcalidrawGenericElement,
   ExcalidrawIframeLikeElement,
   ExcalidrawImageElement,
   ExcalidrawLinearElement,
   ExcalidrawMagicFrameElement,
+  ExcalidrawManufacturerElement,
+  ExcalidrawMergerElement,
+  ExcalidrawOilExtractorElement,
+  ExcalidrawOilRefineryElement,
+  ExcalidrawPackagerElement,
+  ExcalidrawResourceNodeElement,
+  ExcalidrawSatisfactoryElement,
   ExcalidrawSelectionElement,
+  ExcalidrawSmelterElement,
   ExcalidrawTextElement,
+  ExcalidrawWaterExtractorElement,
   FileId,
   FontFamilyValues,
   NonDeletedSceneElementsMap,
@@ -164,6 +192,14 @@ export type ValidContainer =
         verticalAlign?: VerticalAlign;
       } & MarkOptional<ElementConstructorOpts, "x" | "y">;
     } & ElementConstructorOpts;
+``;
+
+export type ValidSatisfactoryElement =
+  | {
+      type: ExcalidrawSatisfactoryElement["type"];
+      id?: ExcalidrawSatisfactoryElement["id"];
+    } & ElementConstructorOpts;
+``;
 
 export type ExcalidrawElementSkeleton =
   | Extract<
@@ -176,6 +212,7 @@ export type ExcalidrawElementSkeleton =
       y: number;
     } & Partial<ExcalidrawLinearElement>)
   | ValidContainer
+  | ValidSatisfactoryElement
   | ValidLinearElement
   | ({
       type: "text";
@@ -311,6 +348,91 @@ const bindLinearElementToElement = (
             });
             break;
           }
+          case "resourceNode": {
+            startBoundElement = newResourceNodeElement({
+              ...(existingElement as ExcalidrawResourceNodeElement),
+              ...start,
+            });
+            break;
+          }
+          case "splitter":
+            startBoundElement = newSplitterElement({
+              ...(existingElement as ExcalidrawResourceNodeElement),
+              ...start,
+            });
+            break;
+          case "merger":
+            startBoundElement = newMergerElement({
+              ...(existingElement as ExcalidrawMergerElement),
+              ...start,
+            });
+            break;
+          case "constructor":
+            startBoundElement = newConstructorElement({
+              ...(existingElement as ExcalidrawConstructorElement),
+              ...start,
+            });
+            break;
+          case "assembler":
+            startBoundElement = newAssemblerElement({
+              ...(existingElement as ExcalidrawAssemblerElement),
+              ...start,
+            });
+            break;
+          case "manufacturer":
+            startBoundElement = newManufacturerElement({
+              ...(existingElement as ExcalidrawManufacturerElement),
+              ...start,
+            });
+            break;
+          case "smelter":
+            startBoundElement = newSmelterElement({
+              ...(existingElement as ExcalidrawSmelterElement),
+              ...start,
+            });
+            break;
+          case "foundry":
+            startBoundElement = newFoundryElement({
+              ...(existingElement as ExcalidrawFoundryElement),
+              ...start,
+            });
+            break;
+          case "coalGenerator":
+            startBoundElement = newCoalGeneratorElement({
+              ...(existingElement as ExcalidrawCoalGeneratorElement),
+              ...start,
+            });
+            break;
+          case "oilRefinery":
+            startBoundElement = newOilRefineryElement({
+              ...(existingElement as ExcalidrawOilRefineryElement),
+              ...start,
+            });
+            break;
+          case "fuelGenerator":
+            startBoundElement = newFuelGeneratorElement({
+              ...(existingElement as ExcalidrawFuelGeneratorElement),
+              ...start,
+            });
+            break;
+          case "oilExtractor":
+            startBoundElement = newOilExtractorElement({
+              ...(existingElement as ExcalidrawOilExtractorElement),
+              ...start,
+            });
+            break;
+          case "packager":
+            startBoundElement = newPackagerElement({
+              ...(existingElement as ExcalidrawPackagerElement),
+              ...start,
+            });
+            break;
+          case "waterExtractor":
+            startBoundElement = newWaterExtractorElement({
+              ...(existingElement as ExcalidrawWaterExtractorElement),
+              ...start,
+            });
+            break;
           default: {
             assertNever(
               linearElement as never,
@@ -386,6 +508,91 @@ const bindLinearElementToElement = (
             });
             break;
           }
+          case "resourceNode": {
+            endBoundElement = newResourceNodeElement({
+              ...(existingElement as ExcalidrawResourceNodeElement),
+              ...end,
+            });
+            break;
+          }
+          case "splitter":
+            endBoundElement = newSplitterElement({
+              ...(existingElement as ExcalidrawResourceNodeElement),
+              ...end,
+            });
+            break;
+          case "merger":
+            endBoundElement = newSplitterElement({
+              ...(existingElement as ExcalidrawMergerElement),
+              ...end,
+            });
+            break;
+          case "constructor":
+            endBoundElement = newConstructorElement({
+              ...(existingElement as ExcalidrawConstructorElement),
+              ...end,
+            });
+            break;
+          case "assembler":
+            endBoundElement = newAssemblerElement({
+              ...(existingElement as ExcalidrawAssemblerElement),
+              ...end,
+            });
+            break;
+          case "manufacturer":
+            endBoundElement = newManufacturerElement({
+              ...(existingElement as ExcalidrawManufacturerElement),
+              ...end,
+            });
+            break;
+          case "smelter":
+            endBoundElement = newSmelterElement({
+              ...(existingElement as ExcalidrawSmelterElement),
+              ...end,
+            });
+            break;
+          case "foundry":
+            endBoundElement = newFoundryElement({
+              ...(existingElement as ExcalidrawFoundryElement),
+              ...end,
+            });
+            break;
+          case "coalGenerator":
+            endBoundElement = newCoalGeneratorElement({
+              ...(existingElement as ExcalidrawCoalGeneratorElement),
+              ...end,
+            });
+            break;
+          case "oilRefinery":
+            endBoundElement = newOilRefineryElement({
+              ...(existingElement as ExcalidrawOilRefineryElement),
+              ...end,
+            });
+            break;
+          case "fuelGenerator":
+            endBoundElement = newFuelGeneratorElement({
+              ...(existingElement as ExcalidrawFuelGeneratorElement),
+              ...end,
+            });
+            break;
+          case "oilExtractor":
+            endBoundElement = newOilExtractorElement({
+              ...(existingElement as ExcalidrawOilExtractorElement),
+              ...end,
+            });
+            break;
+          case "packager":
+            endBoundElement = newPackagerElement({
+              ...(existingElement as ExcalidrawPackagerElement),
+              ...end,
+            });
+            break;
+          case "waterExtractor":
+            endBoundElement = newWaterExtractorElement({
+              ...(existingElement as ExcalidrawWaterExtractorElement),
+              ...end,
+            });
+            break;
           default: {
             assertNever(
               linearElement as never,
@@ -524,6 +731,160 @@ export const convertToExcalidrawElements = (
             : element?.height || DEFAULT_DIMENSION;
         excalidrawElement = newElement({
           ...element,
+          width,
+          height,
+        });
+
+        break;
+      }
+      case "resourceNode": {
+        const width = element?.width || DEFAULT_DIMENSION;
+        const height = element?.height || DEFAULT_DIMENSION;
+        excalidrawElement = newResourceNodeElement({
+          ...(element as ExcalidrawResourceNodeElement),
+          width,
+          height,
+        });
+
+        break;
+      }
+      case "splitter": {
+        const width = element?.width || DEFAULT_DIMENSION;
+        const height = element?.height || DEFAULT_DIMENSION;
+        excalidrawElement = newSplitterElement({
+          ...(element as ExcalidrawResourceNodeElement),
+          width,
+          height,
+        });
+
+        break;
+      }
+      case "merger": {
+        const width = element?.width || DEFAULT_DIMENSION;
+        const height = element?.height || DEFAULT_DIMENSION;
+        excalidrawElement = newMergerElement({
+          ...(element as ExcalidrawResourceNodeElement),
+          width,
+          height,
+        });
+
+        break;
+      }
+      case "constructor": {
+        const width = element?.width || DEFAULT_DIMENSION;
+        const height = element?.height || DEFAULT_DIMENSION;
+        excalidrawElement = newConstructorElement({
+          ...(element as ExcalidrawConstructorElement),
+          width,
+          height,
+        });
+
+        break;
+      }
+      case "assembler": {
+        const width = element?.width || DEFAULT_DIMENSION;
+        const height = element?.height || DEFAULT_DIMENSION;
+        excalidrawElement = newAssemblerElement({
+          ...(element as ExcalidrawAssemblerElement),
+          width,
+          height,
+        });
+
+        break;
+      }
+      case "manufacturer": {
+        const width = element?.width || DEFAULT_DIMENSION;
+        const height = element?.height || DEFAULT_DIMENSION;
+        excalidrawElement = newManufacturerElement({
+          ...(element as ExcalidrawManufacturerElement),
+          width,
+          height,
+        });
+
+        break;
+      }
+      case "smelter": {
+        const width = element?.width || DEFAULT_DIMENSION;
+        const height = element?.height || DEFAULT_DIMENSION;
+        excalidrawElement = newSmelterElement({
+          ...(element as ExcalidrawSmelterElement),
+          width,
+          height,
+        });
+
+        break;
+      }
+      case "foundry": {
+        const width = element?.width || DEFAULT_DIMENSION;
+        const height = element?.height || DEFAULT_DIMENSION;
+        excalidrawElement = newFoundryElement({
+          ...(element as ExcalidrawFoundryElement),
+          width,
+          height,
+        });
+
+        break;
+      }
+      case "coalGenerator": {
+        const width = element?.width || DEFAULT_DIMENSION;
+        const height = element?.height || DEFAULT_DIMENSION;
+        excalidrawElement = newCoalGeneratorElement({
+          ...(element as ExcalidrawCoalGeneratorElement),
+          width,
+          height,
+        });
+
+        break;
+      }
+      case "oilRefinery": {
+        const width = element?.width || DEFAULT_DIMENSION;
+        const height = element?.height || DEFAULT_DIMENSION;
+        excalidrawElement = newOilRefineryElement({
+          ...(element as ExcalidrawOilRefineryElement),
+          width,
+          height,
+        });
+
+        break;
+      }
+      case "fuelGenerator": {
+        const width = element?.width || DEFAULT_DIMENSION;
+        const height = element?.height || DEFAULT_DIMENSION;
+        excalidrawElement = newFuelGeneratorElement({
+          ...(element as ExcalidrawFuelGeneratorElement),
+          width,
+          height,
+        });
+
+        break;
+      }
+      case "oilExtractor": {
+        const width = element?.width || DEFAULT_DIMENSION;
+        const height = element?.height || DEFAULT_DIMENSION;
+        excalidrawElement = newOilExtractorElement({
+          ...(element as ExcalidrawOilExtractorElement),
+          width,
+          height,
+        });
+
+        break;
+      }
+      case "packager": {
+        const width = element?.width || DEFAULT_DIMENSION;
+        const height = element?.height || DEFAULT_DIMENSION;
+        excalidrawElement = newPackagerElement({
+          ...(element as ExcalidrawPackagerElement),
+          width,
+          height,
+        });
+
+        break;
+      }
+      case "waterExtractor": {
+        const width = element?.width || DEFAULT_DIMENSION;
+        const height = element?.height || DEFAULT_DIMENSION;
+        excalidrawElement = newWaterExtractorElement({
+          ...(element as ExcalidrawWaterExtractorElement),
           width,
           height,
         });

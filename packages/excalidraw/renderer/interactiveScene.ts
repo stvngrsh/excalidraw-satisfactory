@@ -241,6 +241,15 @@ const renderBindingHighlightForBindableElement = (
     case "embeddable":
     case "frame":
     case "magicframe":
+    case "constructor":
+    case "assembler":
+    case "manufacturer":
+    case "smelter":
+    case "foundry":
+    case "coalGenerator":
+    case "fuelGenerator":
+    case "packager":
+    case "oilRefinery":
       strokeRectWithRotation(
         context,
         x1 - padding,
@@ -254,6 +263,8 @@ const renderBindingHighlightForBindableElement = (
         radius,
       );
       break;
+    case "merger":
+    case "splitter":
     case "diamond":
       const side = Math.hypot(width, height);
       const wPadding = (padding * side) / height;
@@ -268,6 +279,9 @@ const renderBindingHighlightForBindableElement = (
       );
       break;
     case "ellipse":
+    case "resourceNode":
+    case "waterExtractor":
+    case "oilExtractor":
       strokeEllipseWithRotation(
         context,
         width + padding * 2,

@@ -82,6 +82,20 @@ export const AllowedExcalidrawActiveTools: Record<
   hand: true,
   laser: false,
   magicframe: false,
+  resourceNode: true,
+  constructor: true,
+  assembler: true,
+  manufacturer: true,
+  splitter: true,
+  merger: true,
+  smelter: true,
+  foundry: true,
+  packager: true,
+  coalGenerator: true,
+  fuelGenerator: true,
+  oilRefinery: true,
+  waterExtractor: true,
+  oilExtractor: true,
 };
 
 export type RestoredDataState = {
@@ -315,6 +329,42 @@ const restoreElement = (
       });
     }
 
+    case "resourceNode":
+      return restoreElementWithProperties(element, {
+        clockSpeed: element.clockSpeed,
+        resourceNodeResourceType: element.resourceNodeResourceType,
+        resourceNodeResourcePurity: element.resourceNodeResourcePurity,
+        resourceNodeMinerTier: element.resourceNodeMinerTier,
+      });
+    case "splitter":
+    case "merger":
+      return restoreElementWithProperties(element, {});
+    case "constructor":
+    case "assembler":
+    case "manufacturer":
+    case "smelter":
+    case "foundry":
+    case "packager":
+    case "oilRefinery":
+      return restoreElementWithProperties(element, {
+        recipe: element.recipe,
+        clockSpeed: element.clockSpeed,
+      });
+    case "coalGenerator":
+    case "fuelGenerator":
+      return restoreElementWithProperties(element, {
+        fuel: element.fuel,
+        clockSpeed: element.clockSpeed,
+      });
+    case "waterExtractor":
+      return restoreElementWithProperties(element, {
+        clockSpeed: element.clockSpeed,
+      });
+    case "oilExtractor":
+      return restoreElementWithProperties(element, {
+        clockSpeed: element.clockSpeed,
+        purity: element.purity,
+      });
     // generic elements
     case "ellipse":
     case "rectangle":

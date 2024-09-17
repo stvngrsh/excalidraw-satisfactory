@@ -157,6 +157,20 @@ export const isBindableElement = (
       element.type === "embeddable" ||
       element.type === "frame" ||
       element.type === "magicframe" ||
+      element.type === "resourceNode" ||
+      element.type === "splitter" ||
+      element.type === "merger" ||
+      element.type === "constructor" ||
+      element.type === "assembler" ||
+      element.type === "manufacturer" ||
+      element.type === "smelter" ||
+      element.type === "foundry" ||
+      element.type === "coalGenerator" ||
+      element.type === "fuelGenerator" ||
+      element.type === "oilRefinery" ||
+      element.type === "packager" ||
+      element.type === "oilExtractor" ||
+      element.type === "waterExtractor" ||
       (element.type === "text" && !element.containerId))
   );
 };
@@ -229,7 +243,21 @@ export const isExcalidrawElement = (
     case "frame":
     case "magicframe":
     case "image":
-    case "selection": {
+    case "selection":
+    case "resourceNode":
+    case "splitter":
+    case "merger":
+    case "constructor":
+    case "assembler":
+    case "manufacturer":
+    case "smelter":
+    case "foundry":
+    case "coalGenerator":
+    case "fuelGenerator":
+    case "oilRefinery":
+    case "packager":
+    case "oilExtractor":
+    case "waterExtractor": {
       return true;
     }
     default: {

@@ -15,7 +15,23 @@ export const hasBackground = (type: ElementOrToolType) =>
   type === "freedraw";
 
 export const hasStrokeColor = (type: ElementOrToolType) =>
-  type !== "image" && type !== "frame" && type !== "magicframe";
+  type !== "image" &&
+  type !== "frame" &&
+  type !== "magicframe" &&
+  type !== "resourceNode" &&
+  type !== "splitter" &&
+  type !== "merger" &&
+  type !== "constructor" &&
+  type !== "assembler" &&
+  type !== "manufacturer" &&
+  type !== "smelter" &&
+  type !== "foundry" &&
+  type !== "coalGenerator" &&
+  type !== "fuelGenerator" &&
+  type !== "oilRefinery" &&
+  type !== "packager" &&
+  type !== "oilExtractor" &&
+  type !== "waterExtractor";
 
 export const hasStrokeWidth = (type: ElementOrToolType) =>
   type === "rectangle" ||
@@ -47,6 +63,29 @@ export const canChangeRoundness = (type: ElementOrToolType) =>
 export const toolIsArrow = (type: ElementOrToolType) => type === "arrow";
 
 export const canHaveArrowheads = (type: ElementOrToolType) => type === "arrow";
+
+export const isResourceNode = (type: ElementOrToolType) =>
+  type === "resourceNode";
+export const isSplitter = (type: ElementOrToolType) => type === "splitter";
+export const isMerger = (type: ElementOrToolType) => type === "merger";
+export const isConstructor = (type: ElementOrToolType) =>
+  type === "constructor";
+export const isAssembler = (type: ElementOrToolType) => type === "assembler";
+export const isManufacturer = (type: ElementOrToolType) =>
+  type === "manufacturer";
+export const isSmelter = (type: ElementOrToolType) => type === "smelter";
+export const isFoundry = (type: ElementOrToolType) => type === "foundry";
+export const isCoalGenerator = (type: ElementOrToolType) =>
+  type === "coalGenerator";
+export const isFuelGenerator = (type: ElementOrToolType) =>
+  type === "fuelGenerator";
+export const isOilRefinery = (type: ElementOrToolType) =>
+  type === "oilRefinery";
+export const isPackager = (type: ElementOrToolType) => type === "packager";
+export const isOilExtractor = (type: ElementOrToolType) =>
+  type === "oilExtractor";
+export const isWaterExtractor = (type: ElementOrToolType) =>
+  type === "waterExtractor";
 
 export const getElementAtPosition = (
   elements: readonly NonDeletedExcalidrawElement[],

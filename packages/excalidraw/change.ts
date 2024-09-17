@@ -894,9 +894,11 @@ export class ElementsChange implements Change<SceneElementsMap> {
         const inserted = { isDeleted: true } as ElementPartial;
 
         const delta = Delta.create(
-          deleted,
-          inserted,
-          ElementsChange.stripIrrelevantProps,
+          deleted as Partial<OrderedExcalidrawElement>,
+          inserted as Partial<OrderedExcalidrawElement>,
+          ElementsChange.stripIrrelevantProps as (
+            delta: Partial<OrderedExcalidrawElement>,
+          ) => Partial<OrderedExcalidrawElement>,
         );
 
         removed.set(prevElement.id, delta);
@@ -914,9 +916,11 @@ export class ElementsChange implements Change<SceneElementsMap> {
         } as ElementPartial;
 
         const delta = Delta.create(
-          deleted,
-          inserted,
-          ElementsChange.stripIrrelevantProps,
+          deleted as Partial<OrderedExcalidrawElement>,
+          inserted as Partial<OrderedExcalidrawElement>,
+          ElementsChange.stripIrrelevantProps as (
+            delta: Partial<OrderedExcalidrawElement>,
+          ) => Partial<OrderedExcalidrawElement>,
         );
 
         added.set(nextElement.id, delta);
@@ -928,7 +932,9 @@ export class ElementsChange implements Change<SceneElementsMap> {
         const delta = Delta.calculate<ElementPartial>(
           prevElement,
           nextElement,
-          ElementsChange.stripIrrelevantProps,
+          ElementsChange.stripIrrelevantProps as (
+            partial: Partial<ElementPartial>,
+          ) => Partial<ElementPartial>,
           ElementsChange.postProcess,
         );
 

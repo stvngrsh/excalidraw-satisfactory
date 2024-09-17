@@ -26,6 +26,20 @@ import type {
   FixedPoint,
   SceneElementsMap,
   ExcalidrawRectanguloidElement,
+  ExcalidrawResourceNodeElement,
+  ExcalidrawWaterExtractorElement,
+  ExcalidrawOilExtractorElement,
+  ExcalidrawConstructorElement,
+  ExcalidrawAssemblerElement,
+  ExcalidrawManufacturerElement,
+  ExcalidrawPackagerElement,
+  ExcalidrawFoundryElement,
+  ExcalidrawSmelterElement,
+  ExcalidrawCoalGeneratorElement,
+  ExcalidrawFuelGeneratorElement,
+  ExcalidrawOilRefineryElement,
+  ExcalidrawMergerElement,
+  ExcalidrawSplitterElement,
 } from "./types";
 
 import type { Bounds } from "./bounds";
@@ -1367,10 +1381,24 @@ export const distanceToBindableElement = (
     case "embeddable":
     case "frame":
     case "magicframe":
+    case "constructor":
+    case "assembler":
+    case "manufacturer":
+    case "packager":
+    case "foundry":
+    case "smelter":
+    case "coalGenerator":
+    case "fuelGenerator":
+    case "oilRefinery":
       return distanceToRectangle(element, point, elementsMap);
+    case "merger":
+    case "splitter":
     case "diamond":
       return distanceToDiamond(element, point, elementsMap);
     case "ellipse":
+    case "waterExtractor":
+    case "oilExtractor":
+    case "resourceNode":
       return distanceToEllipse(element, point, elementsMap);
   }
 };
@@ -1392,7 +1420,10 @@ const distanceToRectangle = (
 };
 
 const distanceToDiamond = (
-  element: ExcalidrawDiamondElement,
+  element:
+    | ExcalidrawDiamondElement
+    | ExcalidrawMergerElement
+    | ExcalidrawSplitterElement,
   point: GlobalPoint,
   elementsMap: ElementsMap,
 ): number => {
@@ -1406,7 +1437,11 @@ const distanceToDiamond = (
 };
 
 const distanceToEllipse = (
-  element: ExcalidrawEllipseElement,
+  element:
+    | ExcalidrawEllipseElement
+    | ExcalidrawResourceNodeElement
+    | ExcalidrawWaterExtractorElement
+    | ExcalidrawOilExtractorElement,
   point: GlobalPoint,
   elementsMap: ElementsMap,
 ): number => {
@@ -1415,7 +1450,11 @@ const distanceToEllipse = (
 };
 
 const ellipseParamsForTest = (
-  element: ExcalidrawEllipseElement,
+  element:
+    | ExcalidrawEllipseElement
+    | ExcalidrawResourceNodeElement
+    | ExcalidrawWaterExtractorElement
+    | ExcalidrawOilExtractorElement,
   point: GlobalPoint,
   elementsMap: ElementsMap,
 ): [GA.Point, GA.Line] => {
@@ -1594,9 +1633,23 @@ const determineFocusPoint = (
     case "embeddable":
     case "frame":
     case "magicframe":
+    case "constructor":
+    case "assembler":
+    case "manufacturer":
+    case "packager":
+    case "foundry":
+    case "smelter":
+    case "coalGenerator":
+    case "fuelGenerator":
+    case "oilRefinery":
+    case "merger":
+    case "splitter":
       point = findFocusPointForRectangulars(element, focus, adjecentPointRel);
       break;
     case "ellipse":
+    case "resourceNode":
+    case "waterExtractor":
+    case "oilExtractor":
       point = findFocusPointForEllipse(element, focus, adjecentPointRel);
       break;
   }
@@ -1661,6 +1714,17 @@ const getSortedElementLineIntersections = (
     case "embeddable":
     case "frame":
     case "magicframe":
+    case "constructor":
+    case "assembler":
+    case "manufacturer":
+    case "packager":
+    case "foundry":
+    case "smelter":
+    case "coalGenerator":
+    case "fuelGenerator":
+    case "oilRefinery":
+    case "merger":
+    case "splitter":
       const corners = getCorners(element);
       intersections = corners
         .flatMap((point, i) => {
@@ -1672,6 +1736,9 @@ const getSortedElementLineIntersections = (
         );
       break;
     case "ellipse":
+    case "resourceNode":
+    case "waterExtractor":
+    case "oilExtractor":
       intersections = getEllipseIntersections(element, gap, line);
       break;
   }
@@ -1696,7 +1763,18 @@ const getCorners = (
     | ExcalidrawDiamondElement
     | ExcalidrawTextElement
     | ExcalidrawIframeLikeElement
-    | ExcalidrawFrameLikeElement,
+    | ExcalidrawFrameLikeElement
+    | ExcalidrawConstructorElement
+    | ExcalidrawAssemblerElement
+    | ExcalidrawManufacturerElement
+    | ExcalidrawPackagerElement
+    | ExcalidrawFoundryElement
+    | ExcalidrawSmelterElement
+    | ExcalidrawCoalGeneratorElement
+    | ExcalidrawFuelGeneratorElement
+    | ExcalidrawOilRefineryElement
+    | ExcalidrawMergerElement
+    | ExcalidrawSplitterElement,
   scale: number = 1,
 ): GA.Point[] => {
   const hx = (scale * element.width) / 2;
@@ -1709,6 +1787,15 @@ const getCorners = (
     case "embeddable":
     case "frame":
     case "magicframe":
+    case "constructor":
+    case "assembler":
+    case "manufacturer":
+    case "packager":
+    case "foundry":
+    case "smelter":
+    case "coalGenerator":
+    case "fuelGenerator":
+    case "oilRefinery":
       return [
         GA.point(hx, hy),
         GA.point(hx, -hy),
@@ -1716,6 +1803,8 @@ const getCorners = (
         GA.point(-hx, hy),
       ];
     case "diamond":
+    case "merger":
+    case "splitter":
       return [
         GA.point(0, hy),
         GA.point(hx, 0),
@@ -1755,7 +1844,11 @@ const offsetSegment = (
 };
 
 const getEllipseIntersections = (
-  element: ExcalidrawEllipseElement,
+  element:
+    | ExcalidrawEllipseElement
+    | ExcalidrawResourceNodeElement
+    | ExcalidrawWaterExtractorElement
+    | ExcalidrawOilExtractorElement,
   gap: number,
   line: GA.Line,
 ): GA.Point[] => {
@@ -1815,7 +1908,11 @@ const getCircleIntersections = (
 // The focus point is the tangent point of the "focus image" of the
 // `element`, where the tangent goes through `point`.
 const findFocusPointForEllipse = (
-  ellipse: ExcalidrawEllipseElement,
+  ellipse:
+    | ExcalidrawEllipseElement
+    | ExcalidrawResourceNodeElement
+    | ExcalidrawWaterExtractorElement
+    | ExcalidrawOilExtractorElement,
   // Between -1 and 1 (not 0) the relative size of the "focus image" of
   // the element on which the focus point lies
   relativeDistance: number,
@@ -1858,7 +1955,18 @@ const findFocusPointForRectangulars = (
     | ExcalidrawDiamondElement
     | ExcalidrawTextElement
     | ExcalidrawIframeLikeElement
-    | ExcalidrawFrameLikeElement,
+    | ExcalidrawFrameLikeElement
+    | ExcalidrawConstructorElement
+    | ExcalidrawAssemblerElement
+    | ExcalidrawManufacturerElement
+    | ExcalidrawPackagerElement
+    | ExcalidrawFoundryElement
+    | ExcalidrawSmelterElement
+    | ExcalidrawCoalGeneratorElement
+    | ExcalidrawFuelGeneratorElement
+    | ExcalidrawOilRefineryElement
+    | ExcalidrawMergerElement
+    | ExcalidrawSplitterElement,
   // Between -1 and 1 for how far away should the focus point be relative
   // to the size of the element. Sign determines orientation.
   relativeDistance: number,

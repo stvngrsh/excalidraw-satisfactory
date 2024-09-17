@@ -39,6 +39,8 @@ import type {
 import { getDefaultAppState } from "../appState";
 import {
   BOUND_TEXT_PADDING,
+  DEFAULT_FONT_FAMILY,
+  DEFAULT_FONT_SIZE,
   ELEMENT_READY_TO_ERASE_OPACITY,
   FRAME_STYLE,
   MIME_TYPES,
@@ -53,14 +55,31 @@ import {
   getLineHeightInPx,
   getBoundTextMaxHeight,
   getBoundTextMaxWidth,
+  measureText,
 } from "../element/textElement";
 import { LinearElementEditor } from "../element/linearElementEditor";
 
 import { getContainingFrame } from "../frame";
 import { ShapeCache } from "../scene/ShapeCache";
-import { getVerticalOffset } from "../fonts";
+import { getLineHeight, getVerticalOffset } from "../fonts";
 import { isRightAngleRads } from "../../math";
 import { getCornerRadius } from "../shapes";
+import {
+  getResourceNodeText,
+  getResourceRate,
+  ResourcePurity,
+} from "../satisfactoryTypes/resourceNode";
+import { getResourceNodeStroke } from "../scene/satisfactoryStyles";
+import { t } from "../i18n";
+import { constructorRecipes } from "../satisfactoryTypes/constructor";
+import { assemblerRecipes } from "../satisfactoryTypes/assembler";
+import { manufacturerRecipes } from "../satisfactoryTypes/manufacturer";
+import { smelterRecipes } from "../satisfactoryTypes/smelter";
+import { foundryRecipes } from "../satisfactoryTypes/foundry";
+import { coalGeneratorFuels } from "../satisfactoryTypes/coalGenerator";
+import { fuelGeneratorFuels } from "../satisfactoryTypes/fuelGenerator";
+import { refineryRecipes } from "../satisfactoryTypes/refineryRecipes";
+import { packagerRecipes } from "../satisfactoryTypes/packager";
 
 // using a stronger invert (100% vs our regular 93%) and saturate
 // as a temp hack to make images in dark theme look closer to original
@@ -251,7 +270,14 @@ const generateElementCanvas = (
     context.filter = IMAGE_INVERT_FILTER;
   }
 
-  drawElementOnCanvas(element, rc, context, renderConfig, appState);
+  drawElementOnCanvas(
+    element,
+    rc,
+    context,
+    renderConfig,
+    appState,
+    elementsMap,
+  );
 
   context.restore();
 
@@ -378,16 +404,186 @@ const drawElementOnCanvas = (
   context: CanvasRenderingContext2D,
   renderConfig: StaticCanvasRenderConfig,
   appState: StaticCanvasAppState,
+  elementsMap: ElementsMap,
 ) => {
   switch (element.type) {
     case "rectangle":
     case "iframe":
     case "embeddable":
     case "diamond":
-    case "ellipse": {
+    case "ellipse":
+    case "merger":
+    case "splitter": {
       context.lineJoin = "round";
       context.lineCap = "round";
       rc.draw(ShapeCache.get(element)!);
+      break;
+    }
+    case "constructor":
+    case "assembler":
+    case "manufacturer":
+    case "smelter":
+    case "foundry":
+    case "coalGenerator":
+    case "fuelGenerator":
+    case "oilRefinery":
+    case "packager":
+    case "waterExtractor":
+    case "oilExtractor": {
+      context.lineJoin = "round";
+      context.lineCap = "round";
+      rc.draw(ShapeCache.get(element)!);
+
+      context.canvas.setAttribute("dir", "ltr");
+      context.save();
+      context.font = getFontString({
+        fontSize: DEFAULT_FONT_SIZE,
+        fontFamily: DEFAULT_FONT_FAMILY,
+      });
+      context.fillStyle = "solid";
+      context.textAlign = "center";
+      context.textBaseline = "middle";
+
+      const lines = [t(`element.${element.type}`)];
+
+      switch (element.type) {
+        case "constructor":
+          lines.push(
+            constructorRecipes.find((recipe) => recipe.id === element.recipe)
+              ?.title || "",
+          );
+          break;
+        case "assembler":
+          lines.push(
+            assemblerRecipes.find((recipe) => recipe.id === element.recipe)
+              ?.title || "",
+          );
+          break;
+        case "manufacturer":
+          lines.push(
+            manufacturerRecipes.find((recipe) => recipe.id === element.recipe)
+              ?.title || "",
+          );
+          break;
+        case "smelter":
+          lines.push(
+            smelterRecipes.find((recipe) => recipe.id === element.recipe)
+              ?.title || "",
+          );
+          break;
+        case "foundry":
+          lines.push(
+            foundryRecipes.find((recipe) => recipe.id === element.recipe)
+              ?.title || "",
+          );
+          break;
+        case "coalGenerator":
+          lines.push(
+            coalGeneratorFuels.find((fuel) => fuel.id === element.fuel)
+              ?.title || "",
+          );
+          break;
+        case "fuelGenerator":
+          lines.push(
+            fuelGeneratorFuels.find((fuel) => fuel.id === element.fuel)
+              ?.title || "",
+          );
+          break;
+        case "oilRefinery":
+          lines.push(
+            refineryRecipes.find((recipe) => recipe.id === element.recipe)
+              ?.title || "",
+          );
+          break;
+        case "packager":
+          lines.push(
+            packagerRecipes.find((recipe) => recipe.id === element.recipe)
+              ?.title || "",
+          );
+          break;
+        case "oilExtractor":
+          lines.push(element.purity);
+          break;
+        case "waterExtractor":
+          break;
+      }
+
+      const horizontalOffset = element.width / 2;
+
+      const lineHeightPx = getLineHeightInPx(
+        DEFAULT_FONT_SIZE,
+        getLineHeight(DEFAULT_FONT_FAMILY),
+      );
+
+      let verticalOffset = getVerticalOffset(
+        DEFAULT_FONT_FAMILY,
+        DEFAULT_FONT_SIZE,
+        lineHeightPx,
+      );
+
+      if (element.type === "waterExtractor") {
+        verticalOffset = 0;
+      }
+
+      for (let index = 0; index < lines.length; index++) {
+        context.fillText(
+          lines[index],
+          horizontalOffset,
+          index * lineHeightPx + element.height / 2 - verticalOffset / 2,
+        );
+      }
+      context.restore();
+
+      break;
+    }
+    case "resourceNode": {
+      context.lineJoin = "round";
+      context.lineCap = "round";
+      rc.draw(ShapeCache.get(element)!);
+
+      context.canvas.setAttribute("dir", "ltr");
+      context.save();
+      context.font = getFontString({
+        fontSize: DEFAULT_FONT_SIZE,
+        fontFamily: DEFAULT_FONT_FAMILY,
+      });
+      context.fillStyle = getResourceNodeStroke(
+        element.resourceNodeResourceType,
+      );
+      context.textAlign = "center";
+      context.textBaseline = "middle";
+
+      // Canvas does not support multiline text by default
+      const lines = getResourceNodeText(
+        element.resourceNodeResourceType,
+        element.resourceNodeResourcePurity,
+        element.resourceNodeMinerTier,
+      )
+        .replace(/\r\n?/g, "\n")
+        .split("\n");
+
+      const horizontalOffset = element.width / 2;
+
+      const lineHeightPx = getLineHeightInPx(
+        DEFAULT_FONT_SIZE,
+        getLineHeight(DEFAULT_FONT_FAMILY),
+      );
+
+      const verticalOffset = getVerticalOffset(
+        DEFAULT_FONT_FAMILY,
+        DEFAULT_FONT_SIZE,
+        lineHeightPx,
+      );
+
+      for (let index = 0; index < lines.length; index++) {
+        context.fillText(
+          lines[index],
+          horizontalOffset,
+          index * lineHeightPx + element.height / 2 - verticalOffset,
+        );
+      }
+      context.restore();
+
       break;
     }
     case "arrow":
@@ -395,9 +591,186 @@ const drawElementOnCanvas = (
       context.lineJoin = "round";
       context.lineCap = "round";
 
+      let itemRate: number | null = null;
+      let isByProduct = false;
+      if (!element.boundElements?.length) {
+        const startElement = element.startBinding?.elementId
+          ? elementsMap.get(element.startBinding.elementId)
+          : null;
+        const endElement = element.endBinding?.elementId
+          ? elementsMap.get(element.endBinding.elementId)
+          : null;
+
+        const attachedArrows = startElement?.boundElements?.filter(
+          (boundElement) => boundElement.type === "arrow",
+        );
+
+        if (startElement?.type === "oilRefinery") {
+          if (attachedArrows?.length || 0 > 2) {
+            if (
+              attachedArrows![0].id !== element.id &&
+              attachedArrows![1].id !== element.id
+            ) {
+              itemRate = -1;
+            }
+
+            if (attachedArrows![1].id === element.id) {
+              isByProduct = true;
+            }
+          }
+        } else {
+          if (attachedArrows?.length || 0 > 1) {
+            if (attachedArrows![0].id !== element.id) {
+              itemRate = -1;
+            }
+          }
+        }
+
+        if (startElement && itemRate !== -1) {
+          switch (startElement.type) {
+            case "resourceNode":
+              itemRate = getResourceRate(
+                startElement.resourceNodeResourcePurity,
+                startElement.resourceNodeMinerTier,
+              );
+              break;
+            case "constructor":
+              itemRate =
+                constructorRecipes.find(
+                  (recipe) => recipe.id === startElement.recipe,
+                )?.output.rate || null;
+              break;
+            case "assembler":
+              itemRate =
+                assemblerRecipes.find(
+                  (recipe) => recipe.id === startElement.recipe,
+                )?.output.rate || null;
+              break;
+            case "manufacturer":
+              itemRate =
+                manufacturerRecipes.find(
+                  (recipe) => recipe.id === startElement.recipe,
+                )?.output.rate || null;
+              break;
+            case "smelter":
+              itemRate =
+                smelterRecipes.find(
+                  (recipe) => recipe.id === startElement.recipe,
+                )?.output.rate || null;
+              break;
+            case "foundry":
+              itemRate =
+                foundryRecipes.find(
+                  (recipe) => recipe.id === startElement.recipe,
+                )?.output.rate || null;
+              break;
+            case "packager":
+              itemRate =
+                packagerRecipes.find(
+                  (recipe) => recipe.id === startElement.recipe,
+                )?.output.rate || null;
+              break;
+            case "oilRefinery":
+              if (isByProduct) {
+                itemRate =
+                  refineryRecipes.find(
+                    (recipe) => recipe.id === startElement.recipe,
+                  )?.byProduct?.rate || null;
+              } else {
+                itemRate =
+                  refineryRecipes.find(
+                    (recipe) => recipe.id === startElement.recipe,
+                  )?.output.rate || null;
+              }
+              break;
+            case "waterExtractor":
+              itemRate = 120;
+              break;
+            case "oilExtractor":
+              itemRate = 120;
+              if (startElement.purity === ResourcePurity.Impure) {
+                itemRate = 60;
+              } else if (startElement.purity === ResourcePurity.Pure) {
+                itemRate = 240;
+              }
+              break;
+
+            default:
+            // do nothing
+          }
+        }
+      }
+
+      console.log(rc, appState);
+
       ShapeCache.get(element)!.forEach((shape) => {
         rc.draw(shape);
       });
+
+      if (itemRate !== null) {
+        context.canvas.setAttribute("dir", "ltr");
+        context.save();
+        const font = getFontString({
+          fontSize: DEFAULT_FONT_SIZE,
+          fontFamily: DEFAULT_FONT_FAMILY,
+        });
+        context.font = font;
+        context.fillStyle = itemRate === -1 ? "red" : element.fillStyle;
+        context.textAlign = "center";
+        context.textBaseline = "middle";
+
+        const lineHeight = getLineHeight(DEFAULT_FONT_FAMILY);
+
+        const rateString =
+          itemRate === -1
+            ? "X"
+            : isByProduct
+            ? `(${itemRate})`
+            : itemRate.toString();
+
+        const metrics = measureText(rateString, font, lineHeight);
+
+        const horizontalOffset = metrics.width / 2;
+
+        const lineHeightPx = getLineHeightInPx(DEFAULT_FONT_SIZE, lineHeight);
+
+        const verticalOffset = getVerticalOffset(
+          DEFAULT_FONT_FAMILY,
+          DEFAULT_FONT_SIZE,
+          lineHeightPx,
+        );
+
+        const flipX = element.points[1][0] < element.points[0][0];
+        const flipY = element.points[1][1] < element.points[0][1];
+
+        context.translate(
+          (flipX ? -1 : 1) * (element.width / 2),
+          (flipY ? -1 : 1) * (element.height / 2),
+        );
+
+        context.clearRect(
+          -(metrics.width / 2 + BOUND_TEXT_PADDING) *
+            window.devicePixelRatio *
+            appState.zoom.value,
+          -(metrics.height / 2 + BOUND_TEXT_PADDING) *
+            window.devicePixelRatio *
+            appState.zoom.value,
+          (metrics.width + BOUND_TEXT_PADDING * 2) *
+            window.devicePixelRatio *
+            appState.zoom.value,
+          (metrics.height + BOUND_TEXT_PADDING * 2) *
+            window.devicePixelRatio *
+            appState.zoom.value,
+        );
+        context.translate(-horizontalOffset, -verticalOffset);
+        context.fillText(
+          rateString,
+          horizontalOffset,
+          lineHeightPx + metrics.height / 2 - verticalOffset,
+        );
+        context.restore();
+      }
+
       break;
     }
     case "freedraw": {
@@ -463,7 +836,6 @@ const drawElementOnCanvas = (
 
         // Canvas does not support multiline text by default
         const lines = element.text.replace(/\r\n?/g, "\n").split("\n");
-
         const horizontalOffset =
           element.textAlign === "center"
             ? element.width / 2
@@ -483,6 +855,14 @@ const drawElementOnCanvas = (
         );
 
         for (let index = 0; index < lines.length; index++) {
+          console.log(
+            "default",
+            horizontalOffset,
+            verticalOffset,
+            lineHeightPx,
+            element.height,
+          );
+
           context.fillText(
             lines[index],
             horizontalOffset,
@@ -742,7 +1122,14 @@ export const renderElement = (
         context.translate(cx, cy);
         context.rotate(element.angle);
         context.translate(-shiftX, -shiftY);
-        drawElementOnCanvas(element, rc, context, renderConfig, appState);
+        drawElementOnCanvas(
+          element,
+          rc,
+          context,
+          renderConfig,
+          appState,
+          allElementsMap,
+        );
         context.restore();
       } else {
         const elementWithCanvas = generateElementWithCanvas(
@@ -774,7 +1161,21 @@ export const renderElement = (
     case "image":
     case "text":
     case "iframe":
-    case "embeddable": {
+    case "embeddable":
+    case "resourceNode":
+    case "constructor":
+    case "assembler":
+    case "manufacturer":
+    case "smelter":
+    case "foundry":
+    case "coalGenerator":
+    case "fuelGenerator":
+    case "oilRefinery":
+    case "packager":
+    case "waterExtractor":
+    case "oilExtractor":
+    case "splitter":
+    case "merger": {
       // TODO investigate if we can do this in situ. Right now we need to call
       // beforehand because math helpers (such as getElementAbsoluteCoords)
       // rely on existing shapes
@@ -841,6 +1242,7 @@ export const renderElement = (
             tempCanvasContext,
             renderConfig,
             appState,
+            allElementsMap,
           );
 
           tempCanvasContext.translate(shiftX, shiftY);
@@ -880,7 +1282,14 @@ export const renderElement = (
           }
 
           context.translate(-shiftX, -shiftY);
-          drawElementOnCanvas(element, rc, context, renderConfig, appState);
+          drawElementOnCanvas(
+            element,
+            rc,
+            context,
+            renderConfig,
+            appState,
+            allElementsMap,
+          );
         }
 
         context.restore();
