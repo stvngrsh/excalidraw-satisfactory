@@ -94,7 +94,16 @@ export const actionClockSpeed = register({
         <div style={{ display: "flex", justifyContent: "space-between" }}>
           <input
             type="number"
-            value={appState.currentItemClockSpeed}
+            value={
+              getFormValue(
+                elements,
+                appState,
+                (element) =>
+                  (element as ExcalidrawOverclockableElement).clockSpeed,
+                true,
+                appState.currentItemClockSpeed,
+              ) ?? undefined
+            }
             onChange={(event) => {
               updateData({ currentItemClockSpeed: +event.target.value });
             }}

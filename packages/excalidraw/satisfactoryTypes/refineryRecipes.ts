@@ -21,4 +21,17 @@ export const refineryRecipes: readonly {
       rate: 30,
     },
   },
+  {
+    id: "Refinery_WetConcrete",
+    title: "Wet Concrete",
+    alt: true,
+    input: [
+      { item: Item.Limestone, rate: 120 },
+      { item: Item.Water, rate: 100 },
+    ],
+    output: {
+      item: Item.Concrete,
+      rate: 80,
+    },
+  },
 ];

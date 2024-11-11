@@ -16,6 +16,7 @@ import type {
   ExcalidrawFrameLikeElement,
   ExcalidrawFreeDrawElement,
   ExcalidrawImageElement,
+  ExcalidrawOverclockableElement,
   ExcalidrawSatisfactoryElement,
   ExcalidrawTextElement,
   ExcalidrawTextElementWithContainer,
@@ -448,6 +449,12 @@ const drawElementOnCanvas = (
       context.textAlign = "center";
       context.textBaseline = "middle";
 
+      if (element.clockSpeed > 100) {
+        context.fillStyle = "red";
+      } else if (element.clockSpeed < 100) {
+        context.fillStyle = "green";
+      }
+
       let lines = [];
 
       switch (element.type) {
@@ -559,6 +566,13 @@ const drawElementOnCanvas = (
       context.fillStyle = getResourceNodeStroke(
         element.resourceNodeResourceType,
       );
+
+      if (element.clockSpeed > 100) {
+        context.fillStyle = "red";
+      } else if (element.clockSpeed < 100) {
+        context.fillStyle = "green";
+      }
+
       context.textAlign = "center";
       context.textBaseline = "middle";
 
@@ -626,7 +640,7 @@ const drawElementOnCanvas = (
         // Validate number of arrows
         if (sourceElement?.type === "pipe") {
         } else if (sourceElement?.type === "splitter") {
-          if (arrowsLeavingSource?.length || 0 > 3) {
+          if ((arrowsLeavingSource?.length || 0) > 3) {
             if (
               arrowsLeavingSource![0].id !== element.id &&
               arrowsLeavingSource![1].id !== element.id &&
@@ -636,7 +650,7 @@ const drawElementOnCanvas = (
             }
           }
         } else if (sourceElement?.type === "oilRefinery") {
-          if (arrowsLeavingSource?.length || 0 > 2) {
+          if ((arrowsLeavingSource?.length || 0) > 2) {
             if (
               arrowsLeavingSource![0].id !== element.id &&
               arrowsLeavingSource![1].id !== element.id
@@ -649,7 +663,7 @@ const drawElementOnCanvas = (
             }
           }
         } else {
-          if (arrowsLeavingSource?.length || 0 > 1) {
+          if ((arrowsLeavingSource?.length || 0) > 1) {
             if (arrowsLeavingSource![0].id !== element.id) {
               itemRate = -1;
             }
@@ -695,7 +709,8 @@ const drawElementOnCanvas = (
               break;
             default:
               itemRate = getBuildingRate(
-                sourceElement as ExcalidrawSatisfactoryElement,
+                sourceElement as ExcalidrawOverclockableElement,
+                isByProduct,
               );
           }
         }
@@ -750,16 +765,16 @@ const drawElementOnCanvas = (
 
         if (rateString) {
           context.clearRect(
-            -(metrics.width / 4 + BOUND_TEXT_PADDING) *
+            -(metrics.width / 2 + BOUND_TEXT_PADDING) *
               window.devicePixelRatio *
               appState.zoom.value,
-            -(metrics.height / 4 + BOUND_TEXT_PADDING) *
+            -(metrics.height / 2 + BOUND_TEXT_PADDING) *
               window.devicePixelRatio *
               appState.zoom.value,
-            (metrics.width / 2 + BOUND_TEXT_PADDING * 2) *
+            (metrics.width + BOUND_TEXT_PADDING * 2) *
               window.devicePixelRatio *
               appState.zoom.value,
-            (metrics.height / 2 + BOUND_TEXT_PADDING * 2) *
+            (metrics.height + BOUND_TEXT_PADDING * 2) *
               window.devicePixelRatio *
               appState.zoom.value,
           );

@@ -8,6 +8,7 @@ import {
   ExcalidrawMergerElement,
   ExcalidrawOilExtractorElement,
   ExcalidrawOilRefineryElement,
+  ExcalidrawOverclockableElement,
   ExcalidrawPackagerElement,
   ExcalidrawPipeElement,
   ExcalidrawSatisfactoryElement,
@@ -76,7 +77,14 @@ export const getPackagerRate = (element: ExcalidrawPackagerElement): number => {
 
 export const getRefineryRate = (
   element: ExcalidrawOilRefineryElement,
+  isByProduct = false,
 ): number => {
+  if (isByProduct) {
+    return (
+      refineryRecipes.find((recipe) => recipe.id === element.recipe)?.byProduct
+        ?.rate || 0
+    );
+  }
   return (
     refineryRecipes.find((recipe) => recipe.id === element.recipe)?.output
       .rate || 0
@@ -99,35 +107,39 @@ export const getOilExtractorRate = (
 };
 
 export const getBuildingRate = (
-  element: ExcalidrawSatisfactoryElement,
+  element: ExcalidrawOverclockableElement,
+  isByProduct = false,
 ): number => {
-  switch (element.type) {
-    case "resourceNode":
-      return getResourceRate(
-        element.resourceNodeResourcePurity,
-        element.resourceNodeMinerTier,
-      );
-    case "constructor":
-      return getConstructorRate(element);
-    case "assembler":
-      return getAssemblerRate(element);
-    case "manufacturer":
-      return getManufacturerRate(element);
-    case "smelter":
-      return getSmeleterRate(element);
-    case "foundry":
-      return getFoundryRate(element);
-    case "packager":
-      return getPackagerRate(element);
-    case "oilRefinery":
-      return getRefineryRate(element);
-    case "waterExtractor":
-      return getWaterExtractorRate();
-    case "oilExtractor":
-      return getOilExtractorRate(element);
-  }
+  const getBaseRate = () => {
+    switch (element.type) {
+      case "resourceNode":
+        return getResourceRate(
+          element.resourceNodeResourcePurity,
+          element.resourceNodeMinerTier,
+        );
+      case "constructor":
+        return getConstructorRate(element);
+      case "assembler":
+        return getAssemblerRate(element);
+      case "manufacturer":
+        return getManufacturerRate(element);
+      case "smelter":
+        return getSmeleterRate(element);
+      case "foundry":
+        return getFoundryRate(element);
+      case "packager":
+        return getPackagerRate(element);
+      case "oilRefinery":
+        return getRefineryRate(element, isByProduct);
+      case "waterExtractor":
+        return getWaterExtractorRate();
+      case "oilExtractor":
+        return getOilExtractorRate(element);
+    }
+    return 0;
+  };
 
-  return 0;
+  return (getBaseRate() * element.clockSpeed) / 100;
 };
 
 export const getSplitterIncomingRate = (
@@ -196,7 +208,9 @@ export const getSplitterIncomingRate = (
           "merger",
         );
       } else if (sourceElement) {
-        rate += getBuildingRate(sourceElement as ExcalidrawSatisfactoryElement);
+        rate += getBuildingRate(
+          sourceElement as ExcalidrawOverclockableElement,
+        );
       }
     }
   }
